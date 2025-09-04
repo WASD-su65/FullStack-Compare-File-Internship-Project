@@ -13,8 +13,6 @@ class CompareSession(Base):
     pinned = Column(Boolean, default=False, nullable=False)
     archived_at = Column(DateTime, nullable=True)
 
-    # >>> สำคัญ: ให้ตรงกับ DB จริงที่มีคอลัมน์ filename NOT NULL
-    # ถ้า DB เป็น NOT NULL ไม่มี default ให้ใส่ค่าเสมอเวลา INSERT
     filename = Column(String(255), nullable=False)
 
     results = relationship("CompareResult", back_populates="session", cascade="all, delete-orphan")
@@ -31,7 +29,6 @@ class CompareResult(Base):
     session_id = Column(Integer, ForeignKey("compare_sessions.id", ondelete="CASCADE"), index=True)
     created_at = Column(DateTime, server_default=func.now(), index=True)
 
-    # ฟิลด์ที่ UI ใช้อยู่
     customer = Column(String(255))
     project_name = Column(String(255))
     province = Column(String(255))
@@ -40,7 +37,7 @@ class CompareResult(Base):
 
     circuit_norm = Column(String(255), index=True)
     circuit_raw = Column(Text)
-    matched = Column(Integer)  # 0/1
+    matched = Column(Integer)
 
     session = relationship("CompareSession", back_populates="results")
 
