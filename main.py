@@ -5,11 +5,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-from .routes.compare import router as compare_router  # ← ใช้ router ใต้ app/routes
+from .routes.compare import router as compare_router
 
 app = FastAPI(title="Compare System API")
 
-# CORS เปิดกว้างสำหรับ UI
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
