@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSOC Incident Summary</title>
+  <style>
+    :root{
+      --bg:#0b1220;--panel:#101826;--muted:#334155;--text:#e5e7eb;--accent:#22d3ee;--ok:#10b981;
+      --card:#0f172a;
+      --tint-emerald:rgba(16,185,129,.12);
+      --title:#cffafe;                  
+      --chip-bg:#0e1a2b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--panel);border-bottom:1px solid #1f2937}
+    h1{margin:0;font-size:18px}
+    button,select,input{background:#0f172a;color:var(--text);border:1px solid #1f2937;border-radius:10px;padding:8px 10px}
+    button{cursor:pointer}button:hover{border-color:#334155}button:disabled{opacity:.5;cursor:not-allowed}
+    .layout{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 56px)}
+    aside{border-right:1px solid #1f2937;padding:14px;background:#0b1326}
+    .card{border:1px solid #1f2937;border-radius:14px;padding:12px;margin-bottom:12px;background:var(--card)}
+    main{padding:14px 16px}
+    h2{margin:6px 0 10px;font-size:14px;color:#93c5fd}
+    .jobs ul{list-style:none;margin:8px 0 0;padding:0;max-height:40vh;overflow:auto}
+    .jobs li{margin:0 0 8px;padding:10px;border:1px solid #1f2937;border-radius:10px;cursor:pointer;background:#0b1326}
+    .jobs li.active{border-color:var(--accent);background:#0e1d2f}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+    .toolbar>*{min-width:160px}
+    .toolbar input[type="search"]{flex:1;min-width:260px}
+    .status{margin-left:auto;color:#9aa6b2}
+
+    .kpi{display:flex;gap:10px;margin:10px 0;justify-content:left;flex-wrap:wrap}
+    .kpi .card{min-width:400px;text-align:center;user-select:none;cursor:pointer;transition:.15s;
+      background: linear-gradient(180deg,rgba(148,163,184,.10),transparent)}
+    .kpi .card:hover{border-color:#334155}
+    .kpi .card.active{border-color:var(--accent);background:linear-gradient(180deg,rgba(34,211,238,.12),transparent)}
+    #cardMatched.active{border-color:#166b4d;background:linear-gradient(180deg,rgba(16,185,129,.14),transparent)}
+    #cardUnmatched.active{border-color:#7a4a14;background:linear-gradient(180deg,rgba(245,158,11,.14),transparent)}
+
+    .tablewrap{border:1px solid #1f2937;border-radius:12px;overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    thead th{position:sticky;top:0;background:#0f172a;border-bottom:1px solid #1f2937;padding:8px;text-align:left}
+    tbody td{padding:8px;border-bottom:1px solid #11203a}
+    .small{font-size:12px;color:#9aa6b2}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #27405e}
+    .badge.ok{border-color:#14532d}
+    .badge.warn{border-color:#845213}
+    .tabs{display:flex;gap:8px;margin:8px 0}
+    .tabs button{padding:6px 10px;border-radius:999px}
+    .tabs button.active{border-color:var(--accent)}
+    .hidden{display:none}
+    .jobs .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;margin-top:8px}
+    .jobs .filters .actions{grid-column:1 / -1;display:flex;gap:8px}
+    #loadingOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999}
+    #loadingOverlay .box{background:#0b1326;border:1px solid #1f2937;border-radius:12px;padding:16px 20px;min-width:260px;text-align:center}
+    .spinner{width:22px;height:22px;border:3px solid #334155;border-top-color:var(--accent);border-radius:50%;display:inline-block;animation:spin 0.9s linear infinite;margin-right:10px;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .summarybar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+    .meta-row{display:flex;gap:8px;align-items:center;margin-top:10px;justify-content:space-between}
+    #adminCard{margin-top:12px;} #jobsList{margin-top:8px;}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #27405e;border-radius:999px;padding:2px 8px;background:var(--chip-bg)}
+
+    .kpi-report{justify-content:flex-start}
+    .kpi-report .card{cursor:default;background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+
+    .kpi-report .card.metric{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:220px}
+    .kpi-report .card .title{font-size:22px;font-weight:800;letter-spacing:.2px;text-align:center;color:var(--title)}
+    .kpi-report .card .value{font-size:20px;font-weight:700;margin-top:4px;color:#e5e7eb}
+
+    #serviceCard{min-width:260px}
+    #serviceCard .svc-row{display:flex;justify-content:space-between;gap:12px;margin-top:6px;padding-top:6px;border-top:1px solid #1f2937}
+    #serviceCard .svc-row span,#serviceCard .svc-row strong{font-size:16px}
+
+    #provinceCard{flex:1;min-width:320px}
+    #provinceCard .value{font-size:16px;font-weight:700}
+    .province-box{margin-top:6px;max-height:160px;overflow:auto}
+    .province-box .chip{margin-top:4px}
+
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .chart-card{position:relative;height:380px;background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+    .chart-title{font-size:13px;color:var(--title);margin-bottom:6px}
+    .chart-card canvas{position:absolute;inset:14px} /* padding กัน label ล้น */
+
+    .insights-card{background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+    .hot-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-top:6px}
+    .hot-name{font-size:13px}
+    .hot-bar{height:10px;border-radius:6px;background:#0e1a2b;overflow:hidden;min-width:180px}
+    .hot-bar>span{display:block;height:100%}
+
+    body.light-theme {
+      --bg:#f8fafc;
+      --panel:#545859;
+      --muted:#94a3b8;
+      --text:#1f2937;
+      --accent:#0ea5e9;
+      --ok:#22c55e;
+      --card:#fefefe;
+      --tint-emerald:rgba(34,197,94,.1);
+      --title:#1f2937;
+      --chip-bg:#ffffff;
+      --heading:#FFD100;
+      --table-heading:#ffffff;
+
+      --form-bg: #f3f4f6;
+      --form-border: #d1d5db;
+      --form-text: var(--text);
+      --button-bg: #e5e7eb;
+      --button-hover-border: #9ca3af;
+
+      --sharp-report: #000000;
+    }
+    
+    body.light-theme button,
+    body.light-theme select,
+    body.light-theme input {
+      background:var(--form-bg);
+      color:var(--form-text);
+      border:1px solid var(--form-border);
+    }
+    body.light-theme button:hover{
+      border-color:var(--button-hover-border);
+    }
+    
+    body.light-theme header h1,
+    body.light-theme .main-title {
+      color: var(--heading);
+    }
+    body.light-theme .card,
+    body.light-theme table thead th,
+    body.light-theme .jobs li {
+      border-color: var(--form-border);
+    }
+    body.light-theme .jobs li {
+      background: var(--form-bg);
+    }
+    body.light-theme .jobs li.active {
+      border-color:var(--accent);
+      background:#dbeafe;
+    }
+    body.light-theme .tablewrap table thead th {
+      background: var(--panel);
+      color: var(--table-heading);
+    }
+    body.light-theme .tablewrap table tbody td {
+      border-bottom:1px solid #e5e7eb;
+    }
+    body.light-theme #loadingOverlay .box {
+      background:var(--card);
+      color:var(--text);
+    }
+    body.light-theme .badge {
+      border-color: #070707;
+      background: #e5e7eb;
+      color: var(--text);
+    }
+    body.light-theme .badge.ok {
+      border-color:#16a34a;
+      background:#dcfce7;
+      color:#16a34a;
+    }
+    body.light-theme .badge.warn {
+      border-color:#d97706;
+      background:#fffbeb;
+      color:#d97706;
+    }
+    body.light-theme .chip {
+      border-color: var(--form-border);
+      background: var(--chip-bg);
+      color: var(--text);
+    }
+    body.light-theme .spinner {
+      border-color: #94a3b8;
+      border-top-color: var(--accent);
+    }
+    body.light-theme .kpi-report .card .value{
+      border-color: var(--bg);
+      color: var(--sharp-report);
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>CSOC Incident Summary</h1>
+    <div>
+      <button id="btnExportXLSX" disabled>Download Excel</button>
+      <button id="btnExportSummary" disabled>Summary Excel</button>
+      <button id="btnExportPNG" disabled>Download PNG</button>
+      <button id="btnExportPDF" disabled>Download PDF</button>
+
+      <button id="themeToggleBtn" title="สลับโหมด">สลับธีม</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <div class="card">
+        <h2>Upload</h2>
+        <div class="small">ถ้าไม่อัปโหลด Master จะใช้ไฟล์ default บนเซิร์ฟเวอร์</div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px">
+          <label>Master (Memo): <input type="file" id="fileMaster" accept=".csv,.xlsx" /></label>
+          <label>Compare (Solarwind): <input type="file" id="fileCompare" accept=".csv,.xlsx" /></label>
+          <button id="btnCompare" disabled>Compare</button>
+        </div>
+        <div class="small" style="margin-top:6px">หลัง Compare สำเร็จ ระบบจะสร้าง Job ใหม่และโหลดข้อมูลให้ทันที</div>
+      </div>
+
+      <div class="card jobs">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <h2>Jobs</h2>
+          <div class="small" id="jobCount">—</div>
+        </div>
+
+        <div class="filters">
+          <label class="small">From<br/><input type="date" id="jobDateFrom"/></label>
+          <label class="small">To<br/><input type="date" id="jobDateTo"/></label>
+          <div class="actions">
+            <button id="btnJobFilter">Apply</button>
+            <button id="btnJobClear">Clear</button>
+          </div>
+        </div>
+
+        <div class="card" id="adminCard">
+          <h2>Admin</h2>
+          <div class="small">ใส่ Token (X-Admin-Token) เพื่อเปิดโหมดลบหลายงาน</div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input id="adminToken" type="password" placeholder="X-Admin-Token" style="flex:1">
+            <button id="btnAdminToggle">Enable</button>
+          </div>
+          <div class="small" id="adminStatus">Admin mode: OFF</div>
+          <button id="btnBulkDelete" disabled>Delete Selected</button>
+        </div>
+
+        <ul id="jobsList"></ul>
+
+        <div class="meta">
+          <div class="small" id="jobsMeta">—</div>
+          <button id="btnJobsMore" class="">แสดงเพิ่ม</button>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="tabs">
+        <button id="tabRecords" class="active">Records</button>
+        <button id="tabSummary">Summary</button>
+        <button id="tabReport">Report</button>
+      </div>
+
+      <section id="viewRecords">
+        <div class="toolbar">
+          <select id="selStatus" title="กรองตามสถานะ">
+            <option value="">— ทุกสถานะ —</option>
+            <option value="Found">Matched</option>
+            <option value="Unmatched">Unmatched</option>
+          </select>
+
+          <select id="selField" title="ค้นหาในฟิลด์">
+            <option value="all">— ค้นหาทุกฟิลด์ —</option>
+            <option value="customer">ลูกค้า</option>
+            <option value="project">ชื่อโครงการ</option>
+            <option value="province">จังหวัด</option>
+            <option value="type">ประเภท</option>
+            <option value="circuit_number">เลขวงจร</option>
+          </select>
+
+          <input id="searchBox" type="search" placeholder="พิมพ์เพื่อค้นหา…" />
+          <button id="btnApply">กรอง</button>
+          <button id="btnClear">ล้างตัวกรอง</button>
+          <span class="status" id="statusMsg"></span>
+        </div>
+
+        <div class="kpi">
+          <div id="cardAll" class="card" data-status="">
+            <div>ทั้งหมด</div><div id="kpiAll">0</div>
+          </div>
+          <div id="cardMatched" class="card" data-status="Found">
+            <div>Matched</div><div id="kpiMatched">0</div>
+          </div>
+          <div id="cardUnmatched" class="card" data-status="Unmatched">
+            <div>Unmatched</div><div id="kpiUnmatched">0</div>
+          </div>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>ลูกค้า</th><th>ชื่อโครงการ</th><th>จังหวัด</th><th>ประเภท</th><th>เลขวงจร</th><th>สถานะ</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="meta-row">
+          <div class="small" id="recordsMeta">—</div>
+          <button id="btnMoreRecords">แสดงเพิ่ม</button>
+        </div>
+      </section>
+
+      <section id="viewSummary" class="hidden">
+        <div class="summarybar">
+          <input id="sumCustomerSearch" type="search" placeholder="ค้นหาชื่อลูกค้า…" list="dlCustomers"/>
+          <datalist id="dlCustomers"></datalist>
+
+          <input id="sumProvinceInput" type="search" placeholder="เพิ่มจังหวัด…" list="dlProvincesSummaryMulti" style="min-width:220px">
+          <datalist id="dlProvincesSummaryMulti"></datalist>
+          <button id="btnSumAddProvince">เพิ่มจังหวัด</button>
+          <button id="btnSumClearProvinces">ล้างจังหวัด</button>
+          <span class="small">จังหวัดที่เลือก:</span>
+          <div id="sumProvinceChips" class="chips"></div>
+
+          <button id="btnClearSummary">ล้างทั้งหมด</button>
+          <span class="status" id="sumStatusMsg"></span>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>ลูกค้า</th><th>จังหวัด</th><th>ประเภท</th><th>จำนวนวงจร</th><th>เลขวงจร</th></tr>
+            </thead>
+            <tbody id="tbodyOurSummary"></tbody>
+          </table>
+        </div>
+
+        <div class="meta-row">
+          <div class="small" id="summaryMeta">—</div>
+          <button id="btnMoreSummary">แสดงเพิ่ม</button>
+        </div>
+      </section>
+
+      <section id="viewReport" class="hidden">
+        <div class="summarybar">
+          <input id="reportProvinceInput" type="search" placeholder="เพิ่มจังหวัด…" list="dlProvincesReport" style="min-width:220px">
+          <datalist id="dlProvincesReport"></datalist>
+          <button id="btnAddProvince">เพิ่มจังหวัด</button>
+          <button id="btnClearReportFilters">ล้างฟิลเตอร์</button>
+          <span class="small">จังหวัดที่เลือก:</span>
+          <div id="reportProvinceChips" class="chips"></div>
+          <span class="status" id="reportStatusMsg"></span>
+        </div>
+
+        <div id="reportCapture">
+          <div class="kpi kpi-report">
+            <div class="card metric">
+              <div class="title">ลูกค้า</div>
+              <div class="value" id="kpiAffectedCustomers">0</div>
+            </div>
+            <div class="card metric">
+              <div class="title">จำนวนเหตุเสีย</div>
+              <div class="value" id="kpiAffectedCircuits">0</div>
+            </div>
+            <div class="card" id="serviceCard">
+              <div class="title">Service</div>
+              <div class="svc-row"><span>Data</span><strong id="kpiData">0</strong></div>
+              <div class="svc-row"><span>Broadband</span><strong id="kpiBroadband">0</strong></div>
+              <div class="svc-row"><span>Voice</span><strong id="kpiVoice">0</strong></div>
+            </div>
+            <div class="card" id="provinceCard">
+              <div class="title">จังหวัด</div>
+              <div class="value">ทั้งหมด <span id="kpiAffectedProvinces">0</span> จังหวัด</div>
+              <div id="kpiProvinceList" class="province-box"></div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="card chart-card">
+              <div class="chart-title">Service</div>
+              <canvas id="svcPie"></canvas>
+            </div>
+            <div class="card chart-card">
+              <div class="chart-title">Province (Top)</div>
+              <canvas id="provPie"></canvas>
+            </div>
+          </div>
+
+          <div class="card insights-card" style="margin-top:12px">
+            <div class="title">Hotspots (Top 5 จังหวัด)</div>
+            <div id="hotspots"></div>
+          </div>
+
+          <div class="small" id="reportNote" style="margin-top:8px">—</div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <div id="loadingOverlay">
+    <div class="box">
+      <span class="spinner"></span><span id="loadingText">กำลังประมวลผล…</span>
+    </div>
+  </div>
+
+<script>
+const qs=(s,el=document)=>el.querySelector(s);
+const qsa=(s,el=document)=>[...el.querySelectorAll(s)];
+const API_BASE='';
+
+let currentJob=null;
+let allRecords=[]; let filtered=[];
+let JOBS_ALL=[], JOBS_FILTERED=[], JOBS_SHOWN=0, JOBS_STEP=50;
+let RECORDS_SHOWN=0, RECORDS_STEP=100;
+let SUM_SHOWN=0, SUM_STEP=100;
+
+const fileMaster=qs('#fileMaster'), fileCompare=qs('#fileCompare'), btnCompare=qs('#btnCompare');
+const jobsList=qs('#jobsList'), jobCount=qs('#jobCount');
+const jobDateFrom=qs('#jobDateFrom'), jobDateTo=qs('#jobDateTo'), btnJobFilter=qs('#btnJobFilter'), btnJobClear=qs('#btnJobClear');
+const btnJobsMore=qs('#btnJobsMore'), jobsMeta=qs('#jobsMeta');
+
+const selStatus=qs('#selStatus'), selField=qs('#selField'), searchBox=qs('#searchBox');
+const btnApply=qs('#btnApply'), btnClear=qs('#btnClear');
+const statusMsg=qs('#statusMsg'), tbody=qs('#tbody');
+
+const kpiAll=qs('#kpiAll'), kpiMatched=qs('#kpiMatched'), kpiUnmatched=qs('#kpiUnmatched');
+const cardAll=qs('#cardAll'), cardMatched=qs('#cardMatched'), cardUnmatched=qs('#cardUnmatched');
+
+const btnExportXLSX=qs('#btnExportXLSX'), btnExportSummary=qs('#btnExportSummary');
+const btnExportPNG=qs('#btnExportPNG'), btnExportPDF=qs('#btnExportPDF');
+const tabRecords=qs('#tabRecords'), tabSummary=qs('#tabSummary'), tabReport=qs('#tabReport');
+const viewRecords=qs('#viewRecords'), viewSummary=qs('#viewSummary'), viewReport=qs('#viewReport');
+const loadingOverlay=qs('#loadingOverlay'), loadingText=qs('#loadingText');
+
+const sumCustomerSearch=qs('#sumCustomerSearch');
+const dlCustomers=qs('#dlCustomers');
+
+const btnClearSummary=qs('#btnClearSummary'), sumStatusMsg=qs('#sumStatusMsg');
+const tbodySummary=qs('#tbodyOurSummary'), summaryMeta=qs('#summaryMeta'), btnMoreSummary=qs('#btnMoreSummary');
+
+const sumProvinceInput=qs('#sumProvinceInput');
+const dlProvincesSummaryMulti=qs('#dlProvincesSummaryMulti');
+const btnSumAddProvince=qs('#btnSumAddProvince');
+const btnSumClearProvinces=qs('#btnSumClearProvinces');
+const sumProvinceChips=qs('#sumProvinceChips');
+
+const reportProvinceInput=qs('#reportProvinceInput');
+const dlProvincesReport=qs('#dlProvincesReport');
+const btnAddProvince=qs('#btnAddProvince');
+const btnClearReportFilters=qs('#btnClearReportFilters');
+const reportProvinceChips=qs('#reportProvinceChips');
+const reportStatusMsg=qs('#reportStatusMsg');
+const kpiAffectedCustomers=qs('#kpiAffectedCustomers');
+const kpiAffectedCircuits=qs('#kpiAffectedCircuits');
+const kpiAffectedProvinces=qs('#kpiAffectedProvinces');
+const kpiProvinceList=qs('#kpiProvinceList');
+const kpiData=qs('#kpiData'), kpiBroadband=qs('#kpiBroadband'), kpiVoice=qs('#kpiVoice');
+
+const hotspotsEl=qs('#hotspots');
+
+const svcCanvas=qs('#svcPie'), provCanvas=qs('#provPie');
+let svcChart=null, provChart=null;
+const reportNote=qs('#reportNote');
+
+const SVC_COLORS = {
+  Data:'#60a5fa',        
+  Broadband:'#f59e0b', 
+  Voice:'#f472b6'
+};
+const PROV_PALETTE = [ 
+  '#60a5fa','#f59e0b','#f472b6','#a78bfa','#38bdf8','#fb7185',
+  '#c084fc','#fca5a5','#93c5fd','#e879f9','#eab308','#fda4af',
+  '#818cf8','#fbbf24'
+];
+const provColorMap = new Map();
+function colorForProvince(name){
+  if(!provColorMap.has(name)){
+    provColorMap.set(name, PROV_PALETTE[provColorMap.size % PROV_PALETTE.length]);
+  }
+  return provColorMap.get(name);
+}
+
+function severityColor(ratio){
+  const h = 190 - Math.floor(190*ratio);
+  return `hsl(${h} 90% 55%)`;
+}
+
+function checkCompareEnable(){ btnCompare.disabled=!fileCompare.files.length; }
+fileMaster.onchange=checkCompareEnable; fileCompare.onchange=checkCompareEnable;
+
+function showLoading(text='กำลังประมวลผล…'){ loadingText.textContent=text; loadingOverlay.style.display='flex'; }
+function hideLoading(){ loadingOverlay.style.display='none'; }
+
+const bangkokFormatter = new Intl.DateTimeFormat('th-TH', {
+  timeZone: 'Asia/Bangkok', year:'numeric', month:'2-digit', day:'2-digit',
+  hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+});
+function parseAPIDate(s){
+  if(!s) return new Date(NaN);
+  if(typeof s!=='string') return new Date(s);
+  let t = s.trim();
+  if(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(t)) t = t.replace(' ','T');
+  if(!/(Z|[+-]\d{2}:?\d{2})$/i.test(t)) t += 'Z';
+  return new Date(t);
+}
+function isValidDate(d){ return d instanceof Date && !isNaN(d); }
+function fmtBangkok(s){ const d=parseAPIDate(s); return isValidDate(d) ? bangkokFormatter.format(d) : '-'; }
+function escapeHTML(s){return (s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));}
+function _normStr(s){ return ((s??'')+'').trim(); }
+
+/* ---------- Upload Compare ---------- */
+btnCompare.onclick=async()=>{ 
+  try{
+    showLoading('กำลังอัปโหลดและประมวลผล…');
+    btnCompare.disabled = true;
+    const fd=new FormData();
+    if(fileMaster.files.length) fd.append('master_file',fileMaster.files[0]);
+    fd.append('compare_file',fileCompare.files[0]);
+    const r=await fetch(`${API_BASE}/compare-upload`,{method:'POST',body:fd});
+    if(!r.ok){
+      let msg = await r.text(); try{ const j=JSON.parse(msg); msg=j.detail||msg; }catch{}
+      throw new Error(msg || `HTTP ${r.status}`);
+    }
+    await loadJobs();
+    fileMaster.value = ''; fileCompare.value = ''; checkCompareEnable();
+    loadingText.textContent='สำเร็จ!'; setTimeout(hideLoading, 800);
+  }catch(e){
+    loadingText.textContent='เปรียบเทียบล้มเหลว';
+    setTimeout(()=>{ hideLoading(); alert('เปรียบเทียบล้มเหลว: '+e.message); }, 300);
+  }finally{ btnCompare.disabled = false; }
+};
+
+/* ---------- Jobs ---------- */
+async function loadJobs(){
+  jobsList.innerHTML='<li class="small">กำลังโหลด...</li>';
+  try{
+    const r=await fetch(`${API_BASE}/jobs`);
+    if(!r.ok) throw new Error(await r.text());
+    const jobs=await r.json();
+
+    JOBS_ALL = jobs || [];
+    jobCount.textContent=`${JOBS_ALL.length} jobs`;
+    applyJobsFilter(true);
+  }catch(e){
+    jobsList.innerHTML=`<li class="small">Error: ${escapeHTML(e.message||'unknown')}</li>`;
+  }
+}
+function applyJobsFilter(resetShown=false){
+  const from = jobDateFrom.value ? new Date(jobDateFrom.value+'T00:00:00') : null;
+  const to   = jobDateTo.value   ? new Date(jobDateTo.value+'T23:59:59.999') : null;
+
+  JOBS_FILTERED = JOBS_ALL.filter(j=>{
+    const dt = parseAPIDate(j.created_at);
+    if(from && (!isValidDate(dt) || dt < from)) return false;
+    if(to && (!isValidDate(dt) || dt > to)) return false;
+    return true;
+  });
+
+  JOBS_FILTERED.sort((a,b)=>{
+    const pa = a.pinned ? 1 : 0, pb = b.pinned ? 1 : 0;
+    if(pb!==pa) return pb - pa;
+    const da=parseAPIDate(a.created_at), db=parseAPIDate(b.created_at);
+    const at=isValidDate(da)?da.getTime():-Infinity;
+    const bt=isValidDate(db)?db.getTime():-Infinity;
+    if(bt!==at) return bt - at;
+    return (b.job_id||0)-(a.job_id||0);
+  });
+
+  if(resetShown) JOBS_SHOWN = 0;
+  renderJobs(true);
+}
+
+let ADMIN_MODE=false, ADMIN_TOKEN_VAL='';
+const adminToken=qs('#adminToken'), btnAdminToggle=qs('#btnAdminToggle'), adminStatus=qs('#adminStatus'), btnBulkDelete=qs('#btnBulkDelete');
+
+async function adminCheck(token){
+  const res = await fetch(`${API_BASE}/admin/check?token=${encodeURIComponent(token)}`);
+  if(!res.ok) return false;
+  const data = await res.json().catch(()=>({ok:false}));
+  return !!data.ok;
+}
+function setAdminUI(enabled, msg){
+  ADMIN_MODE = enabled;
+  adminStatus.textContent = `Admin mode: ${enabled ? 'ON' : 'OFF'}${msg? ' — ' + msg : ''}`;
+  btnBulkDelete.disabled = !enabled;
+  btnAdminToggle.textContent = enabled ? 'Disable' : 'Enable';
+  renderJobs(true);
+}
+btnAdminToggle.onclick = async ()=>{
+  if(ADMIN_MODE){ ADMIN_TOKEN_VAL=''; adminToken.value=''; setAdminUI(false,'ปิดโหมด'); return; }
+  const token=(adminToken.value||'').trim();
+  if(!token){ setAdminUI(false,'กรุณาใส่ token'); return; }
+  const ok=await adminCheck(token);
+  if(ok){ ADMIN_TOKEN_VAL=token; setAdminUI(true,'Token ถูกต้อง'); }
+  else { ADMIN_TOKEN_VAL=''; setAdminUI(false,'Token ไม่ถูกต้อง'); alert('Token ไม่ถูกต้อง'); }
+};
+
+btnBulkDelete.onclick = async ()=>{
+  if(!ADMIN_MODE){ alert('กรุณาใส่ Admin token ก่อน'); return; }
+  const ids = Array.from(qsa('.job-select:checked')).map(cb=>parseInt(cb.dataset.job,10)).filter(Boolean);
+  if(!ids.length){ alert('ยังไม่ได้เลือกงาน'); return; }
+  if(!confirm(`ยืนยันลบ ${ids.length} jobs? (ข้ามที่ pinned)`)) return;
+  try{
+    const res = await fetch(`${API_BASE}/admin/jobs/bulk?token=${encodeURIComponent(ADMIN_TOKEN_VAL)}`, {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_ids: ids })
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    alert(`ลบแล้ว: ${data.deleted.length} งาน, ข้าม: ${data.skipped.length}`);
+    await loadJobs();
+  }catch(e){ alert('ลบล้มเหลว: ' + e.message); }
+};
+
+function renderJobs(forceReset=false){
+  if(forceReset) { jobsList.innerHTML=''; JOBS_SHOWN=0; }
+  const remain = Math.max(0, JOBS_FILTERED.length - JOBS_SHOWN);
+  const take = Math.min(JOBS_STEP, remain);
+  const slice = JOBS_FILTERED.slice(JOBS_SHOWN, JOBS_SHOWN + take);
+
+  slice.forEach(j=>{
+    const li=document.createElement('li');
+    li.className = (currentJob===j.job_id) ? 'active' : '';
+    const ts = fmtBangkok(j.created_at);
+    const pinLabel = j.pinned ? '⭐' : '☆';
+    const chk = ADMIN_MODE ? `<input type="checkbox" class="job-select" data-job="${j.job_id}" style="margin-right:8px">` : '';
+    li.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          ${chk}
+          <strong>Job #${j.job_id}</strong>
+          <button class="pin-btn" data-job="${j.job_id}" title="Pin/Unpin" style="padding:2px 8px">${pinLabel}</button>
+        </div>
+        <div class="small" style="color:#9aa6b2">${ts}</div>
+      </div>
+      <div class="small">Records: ${j.total_records} · Matched: ${j.matched_total} · Unmatched: ${j.unmatched_total}</div>
+    `;
+    li.addEventListener('click', ()=>selectJob(j.job_id, li));
+    const pinBtn = li.querySelector('.pin-btn');
+    if(pinBtn){ pinBtn.addEventListener('click', (e)=>{ e.stopPropagation(); togglePin(j.job_id, !j.pinned); }); }
+    const cb = li.querySelector('.job-select');
+    if(cb){ cb.addEventListener('click', (e)=>{ e.stopPropagation(); }); }
+    jobsList.appendChild(li);
+  });
+
+  JOBS_SHOWN += take;
+  jobsMeta.textContent = `${JOBS_FILTERED.length ? JOBS_SHOWN : 0}/${JOBS_FILTERED.length}`;
+  btnJobsMore.disabled = (JOBS_SHOWN >= JOBS_FILTERED.length);
+}
+btnJobsMore.onclick = ()=> renderJobs();
+
+async function togglePin(jobId, newState){
+  try{
+    const res = await fetch(`${API_BASE}/jobs/${jobId}/pin`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ pinned: newState })
+    });
+    if(!res.ok) throw new Error(await res.text());
+    await loadJobs();
+  }catch(e){ alert('แก้ PIN ไม่สำเร็จ: ' + e.message); }
+}
+
+btnJobFilter.onclick = ()=> applyJobsFilter(true);
+btnJobClear.onclick  = ()=>{ jobDateFrom.value=''; jobDateTo.value=''; applyJobsFilter(true); };
+
+/* ---------- Records ---------- */
+async function selectJob(jobId,li){
+  currentJob=jobId;
+  qsa('#jobsList li').forEach(el=>el.classList.remove('active'));
+  if(li) li.classList.add('active');
+
+  btnExportXLSX.disabled=false; 
+  btnExportSummary.disabled=false;
+
+  await loadRecordsLive(jobId);
+}
+
+async function loadRecordsLive(jobId){
+  try{
+    statusMsg.textContent='โหลด Records...';
+    const r=await fetch(`${API_BASE}/jobs/${jobId}/records`);
+    if(!r.ok) throw new Error(await r.text());
+    allRecords=await r.json();
+
+    populateLookups(allRecords);
+    RECORDS_SHOWN = 0; applyFilters(true);
+    SUM_SHOWN = 0; buildAndRenderSummary();
+    await rebuildAndRenderReport();
+
+    statusMsg.textContent='พร้อม';
+  }catch(e){ statusMsg.textContent='load error: '+e.message; }
+}
+
+let searchTimer=null;
+btnApply.onclick=()=>applyFilters(true);
+btnClear.onclick=()=>{ selStatus.value=''; selField.value='all'; searchBox.value=''; applyFilters(true); };
+selStatus.onchange=()=>applyFilters(true);
+selField.onchange=()=>applyFilters(true);
+searchBox.oninput=()=>{ clearTimeout(searchTimer); searchTimer=setTimeout(()=>applyFilters(true), 180); };
+
+let RECORDS_FILTERED_CACHE=[];
+
+function applyFilters(resetPaging=false){
+  const q=(searchBox.value||'').trim().toLowerCase();
+  const field=selField.value;
+  const stat=selStatus.value;
+
+  filtered = allRecords.filter(r=>{
+    if(stat && r.status!==stat) return false;
+    if(!q) return true;
+
+    const get=(k)=>{
+      if(k==='type'){ return ((r.service_category ?? r.type ?? '')+'').toLowerCase(); }
+      return ((r[k]??'')+'').toLowerCase();
+    };
+    if(field==='all'){
+      return ['customer','project','province','type','circuit_number'].some(k=>get(k).includes(q));
+    }
+    return get(field).includes(q);
+  });
+
+  RECORDS_FILTERED_CACHE = filtered;
+  if(resetPaging){ RECORDS_SHOWN=0; }
+  renderRecordsPaged();
+  renderKPIs();
+  updateKPIActive();
+}
+
+const recordsMeta=qs('#recordsMeta'), btnMoreRecords=qs('#btnMoreRecords');
+
+function renderKPIs(){
+  kpiAll.textContent=RECORDS_FILTERED_CACHE.length;
+  kpiMatched.textContent=RECORDS_FILTERED_CACHE.filter(r=>r.status==='Found').length;
+  kpiUnmatched.textContent=RECORDS_FILTERED_CACHE.filter(r=>r.status==='Unmatched').length;
+}
+
+function renderRecordsPaged(){
+  if (RECORDS_SHOWN === 0) tbody.innerHTML='';
+  const total = RECORDS_FILTERED_CACHE.length;
+  const remain = Math.max(0, total - RECORDS_SHOWN);
+  const take = Math.min(RECORDS_STEP, remain);
+  const slice = RECORDS_FILTERED_CACHE.slice(RECORDS_SHOWN, RECORDS_SHOWN + take);
+
+  const base = RECORDS_SHOWN;
+  let i=0, chunk=50;
+  function paint(){
+    const end=Math.min(i+chunk, slice.length);
+    for(; i<end; i++){
+      const r=slice[i];
+      const cust = _normStr(r.customer) || '—';
+      const proj = _normStr(r.project) || '—';
+      const prov = _normStr(r.province) || '—';
+      const displayType = _normStr(r.service_category ?? r.type ?? '') || '—';
+      const cir = _normStr(r.circuit_number) || (r.circuit_norm || '—');
+
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${base + i + 1}</td>
+        <td>${escapeHTML(cust)}</td>
+        <td>${escapeHTML(proj)}</td>
+        <td>${escapeHTML(prov)}</td>
+        <td>${escapeHTML(displayType)}</td>
+        <td>${escapeHTML(cir)}</td>
+        <td>${r.status==='Found'?'<span class="badge ok">Matched</span>':'<span class="badge warn">Unmatched</span>'}</td>`;
+      tbody.appendChild(tr);
+    }
+    if(i<slice.length){ requestAnimationFrame(paint); }
+  }
+  requestAnimationFrame(paint);
+
+  RECORDS_SHOWN = base + take;
+  recordsMeta.textContent = `${Math.min(RECORDS_SHOWN, total)}/${total}`;
+  btnMoreRecords.disabled = (RECORDS_SHOWN >= total);
+}
+btnMoreRecords.onclick=()=>renderRecordsPaged();
+
+/* ---------- Summary ---------- */
+const SUMMARY_STATE = { selectedProvinces: new Set() };
+
+function populateLookups(recs){
+  const provs=new Set();
+  const custs=new Set();
+  for(const r of recs){
+    const c=_normStr(r.customer); if(c) custs.add(c);
+    provs.add(_normStr(r.province)||'—');
+  }
+  const sortedProvs=[...provs].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  const sortedCusts=[...custs].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+
+  dlProvincesSummaryMulti.innerHTML = sortedProvs.map(p=>`<option value="${escapeHTML(p)}">`).join('');
+  dlProvincesReport.innerHTML = dlProvincesSummaryMulti.innerHTML;
+  dlCustomers.innerHTML = sortedCusts.map(c=>`<option value="${escapeHTML(c)}">`).join('');
+}
+
+function renderSumProvinceChips(){
+  sumProvinceChips.innerHTML='';
+  for(const p of [...SUMMARY_STATE.selectedProvinces].sort((a,b)=>a.localeCompare(b))){
+    const el=document.createElement('span');
+    el.className='chip';
+    el.innerHTML = `${escapeHTML(p)} <button title="ลบ">×</button>`;
+    el.querySelector('button').onclick=()=>{
+      SUMMARY_STATE.selectedProvinces.delete(p);
+      renderSumProvinceChips();
+      buildAndRenderSummary();
+    };
+    sumProvinceChips.appendChild(el);
+  }
+}
+btnSumAddProvince.onclick=()=>{
+  const v=_normStr(sumProvinceInput.value);
+  if(!v) return;
+  SUMMARY_STATE.selectedProvinces.add(v);
+  sumProvinceInput.value='';
+  renderSumProvinceChips();
+  buildAndRenderSummary();
+};
+btnSumClearProvinces.onclick=()=>{
+  SUMMARY_STATE.selectedProvinces.clear();
+  renderSumProvinceChips();
+  buildAndRenderSummary();
+};
+sumProvinceInput.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter' || e.key===','){ e.preventDefault(); btnSumAddProvince.click(); }
+});
+let sumCustTimer=null;
+sumCustomerSearch.oninput = ()=>{
+  clearTimeout(sumCustTimer);
+  sumCustTimer=setTimeout(buildAndRenderSummary, 150);
+};
+
+function buildSummaryMap(recs, custQ=''){
+  const g=new Map();
+  const qCust=_normStr(custQ).toLowerCase();
+
+  for(const r of recs){
+    if (r.status && r.status !== 'Found') continue;
+    const cust=_normStr(r.customer) || '—';
+    const prov=_normStr(r.province) || '—';
+
+    if (SUMMARY_STATE.selectedProvinces.size && !SUMMARY_STATE.selectedProvinces.has(prov)) continue;
+    if(qCust && !cust.toLowerCase().includes(qCust)) continue;
+
+    const cNorm = _normStr(r.circuit_norm || r.circuit_number).replace(/\s+/g,'').toUpperCase();
+    if(!cNorm) continue;
+
+    const dtype = _normStr(r.service_category ?? r.type ?? '');
+    const key=`${cust}||${prov}`;
+
+    if(!g.has(key)){
+      g.set(key, { cust, prov, circuits: new Set(), types: new Map(), displayCir: new Map() });
+    }
+    const row=g.get(key);
+    row.circuits.add(cNorm);
+    if(!row.types.has(dtype)) row.types.set(dtype, new Set());
+    row.types.get(dtype).add(cNorm);
+    if(!row.displayCir.has(cNorm)){
+      const display = _normStr(r.circuit_number) || cNorm;
+      row.displayCir.set(cNorm, display);
+    }
+  }
+  return g;
+}
+
+let SUMMARY_CACHE_ROWS=[];
+
+function rebuildSummaryRows(){
+  const custQ=sumCustomerSearch.value;
+  const g = buildSummaryMap(allRecords, custQ);
+  const rows=[...g.values()].sort((a,b)=>a.cust.localeCompare(b.cust)||a.prov.localeCompare(b.prov))
+    .map(row=>{
+      const typePairs=[];
+      for(const [t,setCir] of row.types.entries()){
+        const label = t ? escapeHTML(t) : '—';
+        typePairs.push(`${label} : ${setCir.size}`);
+      }
+      typePairs.sort((x,y)=>x.localeCompare(y));
+      const cirList=[...row.displayCir.values()].sort((a,b)=>a.localeCompare(b));
+      return { cust: row.cust, prov: row.prov, typeText: typePairs.join(', '), count: row.circuits.size, cirText: cirList.join(', ') };
+    });
+  SUMMARY_CACHE_ROWS = rows;
+  SUM_SHOWN = 0;
+}
+
+function renderSummaryPaged(){
+  if (SUM_SHOWN === 0) tbodySummary.innerHTML = '';
+  const total = SUMMARY_CACHE_ROWS.length;
+  const remain = Math.max(0, total - SUM_SHOWN);
+  const take = Math.min(SUM_STEP, remain);
+  const slice = SUMMARY_CACHE_ROWS.slice(SUM_SHOWN, SUM_SHOWN + take);
+
+  const base = SUM_SHOWN;
+  let i=0, chunk=50;
+  function paint(){
+    const end=Math.min(i+chunk, slice.length);
+    for(; i<end; i++){
+      const r=slice[i];
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${base + i + 1}</td>
+        <td>${escapeHTML(r.cust||'')}</td>
+        <td>${escapeHTML(r.prov||'')}</td>
+        <td>${escapeHTML(r.typeText)}</td>
+        <td>${r.count}</td>
+        <td>${escapeHTML(r.cirText)}</td>`;
+      tbodySummary.appendChild(tr);
+    }
+    if(i<slice.length){ requestAnimationFrame(paint); }
+  }
+  requestAnimationFrame(paint);
+
+  SUM_SHOWN = base + take;
+  summaryMeta.textContent = `${Math.min(SUM_SHOWN, total)}/${total}`;
+  btnMoreSummary.disabled = (SUM_SHOWN >= total);
+}
+
+function buildAndRenderSummary(){
+  sumStatusMsg.textContent='กำลังสรุป…';
+  rebuildSummaryRows();
+  renderSummaryPaged();
+  sumStatusMsg.textContent='พร้อม';
+}
+btnMoreSummary.onclick=()=>renderSummaryPaged();
+btnClearSummary.onclick=()=>{
+  sumCustomerSearch.value='';
+  SUMMARY_STATE.selectedProvinces.clear();
+  renderSumProvinceChips();
+  buildAndRenderSummary();
+};
+
+/* ---------- Report ---------- */
+const REPORT_STATE = { selectedProvinces: new Set() };
+
+function renderProvinceChips(){
+  reportProvinceChips.innerHTML='';
+  for(const p of [...REPORT_STATE.selectedProvinces].sort((a,b)=>a.localeCompare(b))){
+    const el=document.createElement('span');
+    el.className='chip';
+    el.innerHTML = `${escapeHTML(p)} <button title="ลบ">×</button>`;
+    el.querySelector('button').onclick=()=>{
+      REPORT_STATE.selectedProvinces.delete(p);
+      renderProvinceChips();
+      rebuildAndRenderReport();
+    };
+    reportProvinceChips.appendChild(el);
+  }
+}
+btnAddProvince.onclick=()=>{
+  const v=_normStr(reportProvinceInput.value);
+  if(!v) return;
+  REPORT_STATE.selectedProvinces.add(v);
+  reportProvinceInput.value='';
+  renderProvinceChips();
+  rebuildAndRenderReport();
+};
+btnClearReportFilters.onclick=()=>{
+  REPORT_STATE.selectedProvinces.clear();
+  reportProvinceInput.value='';
+  renderProvinceChips();
+  rebuildAndRenderReport();
+};
+
+function categorizeService(s){
+  const t=(s||'').toString().toLowerCase();
+  if(t.includes('broadband')) return 'Broadband';
+  if(t.includes('voice') || t.includes('tele')) return 'Voice';
+  if(t.includes('data')) return 'Data';
+  return 'Other';
+}
+
+function reportFrom(records){
+  const sel = REPORT_STATE.selectedProvinces;
+  const base = records.filter(r=>{
+    if(r.status!=='Found') return false;
+    const prov=_normStr(r.province) || '—';
+    if(sel.size && !sel.has(prov)) return false;
+    return true;
+  });
+  const uniqueCust=new Set();
+  const provSet=new Set();
+  const svcCount={Data:0,Broadband:0,Voice:0};
+
+  const provCounts=new Map();           
+  const provSvcCounts=new Map();         
+
+  for(const r of base){
+    const cust=_normStr(r.customer);
+    const svc=categorizeService(_normStr(r.service_category ?? r.type ?? ''));
+    const prov=_normStr(r.province) || '—';
+
+    if(cust) uniqueCust.add(cust);
+    if(prov){
+      provSet.add(prov);
+      provCounts.set(prov, (provCounts.get(prov)||0)+1);
+
+      if(!provSvcCounts.has(prov)) provSvcCounts.set(prov, {Data:0,Broadband:0,Voice:0,total:0});
+      const obj = provSvcCounts.get(prov);
+      if(['Data','Broadband','Voice'].includes(svc)) obj[svc] += 1;
+      obj.total += 1;
+    }
+
+    if(svcCount.hasOwnProperty(svc)) svcCount[svc] += 1;
+  }
+
+  const provinceCounts = [...provCounts.entries()]
+    .map(([province,count])=>({province,count}))
+    .sort((a,b)=>b.count - a.count || a.province.localeCompare(b.province));
+
+  const hotspots = [...provSvcCounts.entries()]
+    .map(([province,o])=>({province, total:o.total, Data:o.Data, Broadband:o.Broadband, Voice:o.Voice}))
+    .sort((a,b)=>b.total - a.total)
+    .slice(0,5);
+
+  return {
+    customers: uniqueCust.size,
+    circuits: base.length,
+    provinces: provSet.size,
+    provinceCounts,
+    provincesList: [...provSet].sort((a,b)=>a.localeCompare(b)),
+    services: svcCount,
+    hotspots
+  };
+}
+
+const pieLabelLinesPlugin = {
+  id:'pieLabelLines',
+  afterDatasetDraw(chart, args, opts){
+    const type = chart.config.type;
+    if(type!=='pie' && type!=='doughnut') return;
+    const {ctx} = chart;
+    const meta = chart.getDatasetMeta(args.index);
+    const data = meta?.data || [];
+    ctx.save();
+    ctx.strokeStyle = opts?.color || '#9aa6b2';
+    ctx.lineWidth = opts?.lineWidth || 1;
+    const len = opts?.length || 16;
+    data.forEach((arc, i)=>{
+      const val = chart.data.datasets[args.index]?.data?.[i] ?? 0;
+      if(!val) return;
+      const angle = (arc.startAngle + arc.endAngle)/2;
+      const r = arc.outerRadius;
+      const x0 = arc.x + Math.cos(angle)*r;
+      const y0 = arc.y + Math.sin(angle)*r;
+      const x1 = arc.x + Math.cos(angle)*(r + len);
+      const y1 = arc.y + Math.sin(angle)*(r + len);
+      ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+    });
+    ctx.restore();
+  }
+};
+
+function initChartsOnce(){
+  if(!window.Chart) return;
+  Chart.register(ChartDataLabels, pieLabelLinesPlugin);
+
+  if(!svcChart){
+    svcChart = new Chart(svcCanvas.getContext('2d'), {
+      type: 'pie',
+      data: { labels: [], datasets: [{ data:[], backgroundColor: [], hoverBackgroundColor: [], borderColor:'#101826', borderWidth:2, clip:0 }] },
+      options: {
+        responsive:true, maintainAspectRatio:false, resizeDelay:150,
+        layout:{ padding:{top:40,right:56,bottom:40,left:56} },
+        plugins:{
+          legend:{ position:'right', labels:{ color:'#e5e7eb' } },
+          tooltip:{ enabled:true },
+          datalabels:{
+            color:'#e5e7eb',
+            anchor:'end', align:'end', offset:10, font:{ weight:'800' },
+            formatter:(value, ctx)=>{
+              const arr = ctx.chart.data.datasets[0].data;
+              const total = arr.reduce((a,b)=>a+(+b||0),0) || 1;
+              const pct = Math.round((value/total)*100);
+              return `${pct}%`;
+            }
+          },
+          pieLabelLines:{ length:16, color:'#9aa6b2', lineWidth:1 }
+        }
+      }
+    });
+  }
+
+  if(!provChart){
+    provChart = new Chart(provCanvas.getContext('2d'), {
+      type: 'pie',
+      data: { labels: [], datasets: [{ data:[], backgroundColor: [], borderColor:'#101826', borderWidth:2, clip:0 }]},
+      options: {
+        responsive:true, maintainAspectRatio:false, resizeDelay:150,
+        layout:{ padding:{top:40,right:56,bottom:40,left:56} },
+        plugins:{
+          legend:{ position:'right', labels:{ color:'#e5e7eb' } },
+          tooltip:{ enabled:true },
+          datalabels:{
+            color:'#e5e7eb',
+            anchor:'end', align:'end', offset:10, font:{ weight:'800' },
+            formatter:(value, ctx)=>{
+              const arr = ctx.chart.data.datasets[0].data;
+              const total = arr.reduce((a,b)=>a+(+b||0),0) || 1;
+              const pct = Math.round((value/total)*100);
+              return `${pct}%`;
+            }
+          },
+          pieLabelLines:{ length:16, color:'#9aa6b2', lineWidth:1 }
+        }
+      }
+    });
+  }
+}
+
+function updateCharts(rep){
+  if(!svcChart || !provChart) return;
+
+  const svcRawFull = [
+    {label:'Data', value: rep.services.Data||0, color:SVC_COLORS.Data},
+    {label:'Broadband', value: rep.services.Broadband||0, color:SVC_COLORS.Broadband},
+    {label:'Voice', value: rep.services.Voice||0, color:SVC_COLORS.Voice}
+  ];
+  const svcRaw = svcRawFull.filter(x=>x.value>0);
+  svcChart.data.labels = svcRaw.map(x=>x.label);
+  svcChart.data.datasets[0].data = svcRaw.map(x=>x.value);
+  svcChart.data.datasets[0].backgroundColor = svcRaw.map(x=>x.color);
+  svcChart.data.datasets[0].hoverBackgroundColor = svcRaw.map(x=>x.color);
+  svcChart.update();
+
+  provColorMap.clear();
+  const TOP_N = 8;
+  const top = rep.provinceCounts.slice(0, TOP_N);
+  const labels = top.map(x=>x.province);
+  const data = top.map(x=>x.count);
+  const colors = labels.map(n => colorForProvince(n));
+  provChart.data.labels = labels;
+  provChart.data.datasets[0].data = data;
+  provChart.data.datasets[0].backgroundColor = colors;
+  provChart.update();
+
+  const totalSvc = (rep.services.Data||0)+(rep.services.Broadband||0)+(rep.services.Voice||0) || 1;
+  const svcPairs = [['Data', rep.services.Data||0],['Broadband', rep.services.Broadband||0],['Voice', rep.services.Voice||0]]
+    .sort((a,b)=>b[1]-a[1]);
+  const topSvc = svcPairs[0];
+  const topSvcPct = Math.round((topSvc[1]/totalSvc)*100);
+
+  const topProvObj = rep.provinceCounts[0];
+  const topProvTxt = topProvObj ? `${topProvObj.province} (${topProvObj.count})` : '—';
+  const topProvPct = topProvObj && rep.circuits ? Math.round((topProvObj.count/rep.circuits)*100) : 0;
+
+  reportNote.textContent = `Top Service: ${topSvc[0]} (${topSvcPct}%) • Top Province: ${topProvTxt}${topProvObj ? ' • '+topProvPct+'%' : ''}`;
+}
+
+function renderHotspots(rep){
+  const list = rep.hotspots || [];
+  if(!list.length){ hotspotsEl.innerHTML = '<div class="small">—</div>'; return; }
+  const max = Math.max(...list.map(x=>x.total)) || 1;
+  hotspotsEl.innerHTML = list.map(x=>{
+    const width = Math.round((x.total/max)*100);
+    const color = severityColor(x.total/max);
+    const line = `${escapeHTML(x.province)} (${x.total}) • Data (${x.Data}) | Broadband (${x.Broadband}) | Voice (${x.Voice})`;
+    return `<div class="hot-row">
+      <div class="hot-name">${line}</div>
+      <div class="hot-bar"><span style="width:${width}%; background:${color}"></span></div>
+    </div>`;
+  }).join('');
+}
+
+function renderProvinceList(rep){
+  if(rep.provinceCounts.length){
+    kpiProvinceList.innerHTML = rep.provinceCounts
+      .map(o=>`<span class="chip">${escapeHTML(o.province)}<span class="small"> • ${o.count}</span></span>`)
+      .join(' ');
+  }else{
+    kpiProvinceList.innerHTML = '<span class="small">—</span>';
+  }
+}
+
+async function rebuildAndRenderReport(){
+  reportStatusMsg.textContent='กำลังคำนวณ…';
+
+  const rep = reportFrom(allRecords);
+
+  kpiAffectedCustomers.textContent = rep.customers;
+  kpiAffectedCircuits.textContent  = rep.circuits;
+  kpiAffectedProvinces.textContent = rep.provinces;
+
+  kpiData.textContent = rep.services.Data || 0;
+  kpiBroadband.textContent = rep.services.Broadband || 0;
+  kpiVoice.textContent = rep.services.Voice || 0;
+
+  renderProvinceList(rep);
+  initChartsOnce();
+  updateCharts(rep);
+  renderHotspots(rep);
+
+  reportStatusMsg.textContent='พร้อม';
+}
+
+/* ---------- Tabs ---------- */
+function updateKPIActive(){
+  const s=selStatus.value;
+  cardAll.classList.toggle('active', !s);
+  cardMatched.classList.toggle('active', s==='Found');
+  cardUnmatched.classList.toggle('active', s==='Unmatched');
+}
+tabRecords.onclick=()=>{
+  tabRecords.classList.add('active');
+  tabSummary.classList.remove('active');
+  tabReport.classList.remove('active');
+  viewRecords.classList.remove('hidden');
+  viewSummary.classList.add('hidden');
+  viewReport.classList.add('hidden');
+  btnExportPNG.disabled = true;
+  btnExportPDF.disabled = true;
+  updateKPIActive();
+};
+tabSummary.onclick=()=>{
+  tabSummary.classList.add('active');
+  tabRecords.classList.remove('active');
+  tabReport.classList.remove('active');
+  viewSummary.classList.remove('hidden');
+  viewRecords.classList.add('hidden');
+  viewReport.classList.add('hidden');
+  btnExportPNG.disabled = true;
+  btnExportPDF.disabled = true;
+  buildAndRenderSummary();
+};
+tabReport.onclick=async ()=>{
+  tabReport.classList.add('active');
+  tabRecords.classList.remove('active');
+  tabSummary.classList.remove('active');
+  viewReport.classList.remove('hidden');
+  viewRecords.classList.add('hidden');
+  viewSummary.classList.add('hidden');
+  btnExportPNG.disabled = false;
+  btnExportPDF.disabled = false;
+  await rebuildAndRenderReport();
+};
+
+cardAll.addEventListener('click', ()=>{ selStatus.value=''; applyFilters(true); });
+cardMatched.addEventListener('click', ()=>{ selStatus.value='Found'; applyFilters(true); });
+cardUnmatched.addEventListener('click', ()=>{ selStatus.value='Unmatched'; applyFilters(true); });
+
+/* ---------- Export helpers ---------- */
+function downloadBlob(content, filename, type='text/csv'){
+  const blob = new Blob([content], {type});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function nowTag(){
+  const d = new Date();
+  return d.getFullYear().toString()
+    + String(d.getMonth()+1).padStart(2,'0')
+    + String(d.getDate()).padStart(2,'0')
+    + '_'
+    + String(d.getHours()).padStart(2,'0')
+    + String(d.getMinutes()).padStart(2,'0');
+}
+function isSummaryActive(){ return tabSummary.classList.contains('active') && !viewSummary.classList.contains('hidden'); }
+function isReportActive(){ return tabReport.classList.contains('active') && !viewReport.classList.contains('hidden'); }
+
+/* Export XLSX */
+btnExportXLSX.onclick = ()=>{
+  if(isReportActive()){
+    const rep = reportFrom(allRecords);
+    const rows=[{
+      'จำนวนลูกค้า': rep.customers,
+      'จำนวนเหตุเสีย': rep.circuits,
+      'Data': rep.services.Data || 0,
+      'Broadband': rep.services.Broadband || 0,
+      'Voice': rep.services.Voice || 0,
+      'จังหวัด': (rep.provinceCounts||[]).map(x=>`${x.province}(${x.count})`).join(', ')
+    }];
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'ReportSummary');
+    XLSX.writeFile(wb, `compare_report_summary_${currentJob || 'latest'}_${nowTag()}.xlsx`);
+  }else if(isSummaryActive()){
+    rebuildSummaryRows();
+    const rows = SUMMARY_CACHE_ROWS.map((r,idx)=>({
+      '#': idx+1, 'ลูกค้า': r.cust || '', 'จังหวัด': r.prov || '',
+      'ประเภท': r.typeText || '', 'จำนวนวงจร': r.count ?? 0, 'เลขวงจร': r.cirText || ''
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Summary(Web)');
+    XLSX.writeFile(wb, `compare_summary_web_${currentJob || 'latest'}_${nowTag()}.xlsx`);
+  }else{
+    const rows = RECORDS_FILTERED_CACHE.map((r,idx)=>({
+      '#': idx+1, 
+      'ลูกค้า': _normStr(r.customer) || '—', 
+      'ชื่อโครงการ': _normStr(r.project) || '—',
+      'จังหวัด': _normStr(r.province) || '—',
+      'ประเภท': _normStr(r.service_category ?? r.type ?? '') || '—',
+      'เลขวงจร': _normStr(r.circuit_number) || (r.circuit_norm || '—'),
+      'สถานะ': r.status || ''
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Compare');
+    XLSX.writeFile(wb, `compare_records_${currentJob || 'latest'}_${nowTag()}.xlsx`);
+  }
+};
+
+/* Export Summary XLSX (server) — คงเดิม */
+btnExportSummary.onclick = ()=>{
+  if(!currentJob){ alert('กรุณาเลือก Job ก่อน'); return; }
+  window.location = `${API_BASE}/export/summary?job_id=${currentJob}`;
+};
+
+/* Export Report PNG (เฉพาะส่วน capture) */
+btnExportPNG.onclick = async ()=>{
+  try{
+    if (qs('#viewReport').classList.contains('hidden')) {
+      alert('เปิดแท็บ Report ก่อน'); 
+      return;
+    }
+    const el = qs('#reportCapture');
+    // รอวาดชาร์ตและ layout
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#0b1220';
+    const canvas = await html2canvas(el, {backgroundColor: bg.trim(), scale: 2, useCORS:true, logging:false});
+    canvas.toBlob((blob)=>{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=`report_${currentJob || 'latest'}_${nowTag()}.png`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, 'image/png');
+  }catch(e){ alert('Export PNG ล้มเหลว: '+e.message); }
+};
+
+/* Export Report PDF (A4 แนวนอน เฉพาะส่วน capture) */
+btnExportPDF.onclick = async ()=>{
+  try{
+    const container = qs('#reportCapture');
+    if (qs('#viewReport').classList.contains('hidden')) {
+      alert('เปิดแท็บ Report ก่อน'); 
+      return;
+    }
+
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg') || '#0b1220';
+
+    const canvas = await html2canvas(container, {
+      backgroundColor: bg.trim(),
+      scale: 3,
+      useCORS: true,
+      logging: false
+    });
+    const imgData = canvas.toDataURL('image/png');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 28;
+    const maxW = pageW - margin * 2;
+    const maxH = pageH - margin * 2;
+
+    const scale = Math.min(maxW / canvas.width, maxH / canvas.height);
+    const imgW = canvas.width * scale;
+    const imgH = canvas.height * scale;
+
+    const x = (pageW - imgW) / 2;
+    const y = (pageH - imgH) / 2;
+
+    pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+    pdf.save(`report_${currentJob || 'latest'}_${nowTag()}.pdf`);
+  }catch(e){
+    alert('Export PDF ล้มเหลว: ' + e.message);
+  }
+};
+
+/* ---------- Tabs helper ---------- */
+function updateKPIActive(){
+  const s=selStatus.value;
+  cardAll.classList.toggle('active', !s);
+  cardMatched.classList.toggle('active', s==='Found');
+  cardUnmatched.classList.toggle('active', s==='Unmatched');
+}
+
+const themeToggleBtn = qs('#themeToggleBtn');
+
+function applyTheme(theme) {
+  const body = document.body;
+  if (theme === 'light') {
+    body.classList.add('light-theme');
+    localStorage.setItem('theme', 'light');
+  } else {
+    body.classList.remove('light-theme');
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme) {
+  applyTheme(savedTheme);
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const body = document.body;
+  if (body.classList.contains('light-theme')) {
+    applyTheme('dark');
+  } else {
+    applyTheme('light');
+  }
+});
+
+/* init */
+loadJobs();
+updateKPIActive();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</body>
+</html>
