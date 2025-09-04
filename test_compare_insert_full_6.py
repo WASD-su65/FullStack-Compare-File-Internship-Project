@@ -10,7 +10,6 @@ import pandas as pd
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 
-# รองรับทั้งกรณีไฟล์นี้อยู่ในแพ็กเกจ app/ และอยู่ที่รากโปรเจกต์
 try:
     from .database import SessionLocal
     from .db_models import CompareSession, CompareResult
@@ -26,7 +25,7 @@ KEY_COLUMN  = os.getenv("KEY_COLUMN")  or "เลขวงจร"
 # -------------------- glyph normalize helpers --------------------
 _THAI_DIGITS = {ord(c): ord('0') + i for i, c in enumerate("๐๑๒๓๔๕๖๗๘๙")}
 _FULLW_DIGITS = {ord(c): ord('0') + i for i, c in enumerate("０１２３４５６７８９")}
-_X_LIKE = {'x','X','×','✕','Χ','χ','Х','х','Ｘ','ｘ'}  # Latin/Math/Greek/Cyrillic/Fullwidth
+_X_LIKE = {'x','X','×','✕','Χ','χ','Х','х','Ｘ','ｘ'}
 
 def _to_ascii_digits(s: str) -> str:
     if not isinstance(s, str):
@@ -61,7 +60,7 @@ def _format_text(x: object) -> str:
     return (s[:1].upper() + s[1:].lower()) if s.isascii() else s
 
 # -------------------- patterns --------------------
-_SEP = r"[ \t\u00A0\-_./]*"  # space/NBSP/-_/./
+_SEP = r"[ \t\u00A0\-_./]*"
 PAT_ALPHA = _re.compile(rf"(?<![A-Za-z0-9])(\d{{4}}){_SEP}([A-Za-z]){_SEP}(\d{{4}})(?![A-Za-z0-9])")
 PAT_ID    = _re.compile(rf"(?<![A-Za-z0-9])(\d{{4}}){_SEP}I{_SEP}D{_SEP}(\d{{3,}})(?![A-Za-z0-9])", _re.IGNORECASE)
 OLD_TAG_REGEX = _re.compile(r"(เก่า|old)", _re.IGNORECASE)
@@ -99,7 +98,6 @@ def _extract_all_circuits(text: str) -> List[str]:
 
     out: List[str] = []
 
-    # #### A ####
     for m in PAT_ALPHA.finditer(s):
         start = m.start()
         prefix = s[max(0, start - 15): start]
@@ -110,7 +108,6 @@ def _extract_all_circuits(text: str) -> List[str]:
         if code:
             out.append(code)
 
-    # #### ID ####
     for m in PAT_ID.finditer(s):
         start = m.start()
         prefix = s[max(0, start - 15): start]
@@ -158,14 +155,11 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
     mdf.drop_duplicates(subset=["__KEY__"], inplace=True)
     master_dict = mdf.set_index("__KEY__").to_dict(orient="index")
 
-    # ===== Compare: รวมค่าทุกแถว + รวม "ชื่อคอลัมน์" ด้วย → extract → explode =====
     cdf = _read_compare(compare_path)
 
-    # 1) extract จาก header (ชื่อคอลัมน์)
     header_text = " ".join([("" if c is None else str(c)) for c in cdf.columns])
     header_codes = set(_extract_all_circuits(header_text))
 
-    # 2) extract จากค่าของแถว
     cdf["__joined__"] = cdf.apply(
         lambda r: " ".join([("" if v is None else str(v)) for v in r.values]),
         axis=1
@@ -176,7 +170,6 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
     cdf.rename(columns={"__circuits__": "norm_circuit"}, inplace=True)
     cdf["raw_circuit"] = cdf["norm_circuit"]
 
-    # 3) รวม header_codes ที่ยังไม่อยู่ในแถวเข้าไปด้วย (กรณีเลขอยู่บนชื่อคอลัมน์ เช่น 4261X0051)
     codes_in_rows = set(cdf["norm_circuit"].tolist()) if not cdf.empty else set()
     extra_codes = list(header_codes - codes_in_rows)
     if extra_codes:
@@ -188,7 +181,6 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
     else:
         cdf = cdf[["norm_circuit","raw_circuit"]]
 
-    # ===== DB: สร้าง session พร้อม filename เสมอ =====
     db: Session = SessionLocal()
     session = CompareSession(
         created_at=datetime.utcnow(),
@@ -229,7 +221,6 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
         if matched: matched_total += 1
         else:       unmatched_total += 1
 
-    # กันซ้ำ (ต่อ job) + แทน NaN ด้วย None
     df_out = pd.DataFrame(results).drop_duplicates(subset=["circuit_norm"])
     df_out = df_out.where(pd.notnull(df_out), None)
     if not df_out.empty:
