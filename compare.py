@@ -24,10 +24,10 @@ from ..config import ADMIN_TOKEN, DATABASE_URL, MASTER_EXCEL_PATH, SHEET_NAME
 # Robust import for run_test_compare
 # -------------------------------------------------------------------
 try:
-    from ..test_compare_insert_full_6 import run_test_compare  # type: ignore
+    from ..test_compare_insert_full_6 import run_test_compare
 except Exception:
     try:
-        from test_compare_insert_full_6 import run_test_compare  # type: ignore
+        from test_compare_insert_full_6 import run_test_compare
     except Exception:
         def _load_from_file(p: Path):
             if not p.is_file():
@@ -37,7 +37,7 @@ except Exception:
                 raise ImportError(f"cannot load spec from {p}")
             mod = importlib.util.module_from_spec(spec)
             sys.modules["test_compare_insert_full_6"] = mod
-            spec.loader.exec_module(mod)  # type: ignore
+            spec.loader.exec_module(mod)
             return getattr(mod, "run_test_compare")
 
         loaded = None
@@ -61,7 +61,7 @@ except Exception:
                     "run_test_compare not found. "
                     "Set COMPARE_RUNNER_PATH or place test_compare_insert_full_6.py in app/ or project root."
                 )
-        run_test_compare = loaded  # type: ignore
+        run_test_compare = loaded
 # -------------------------------------------------------------------
 
 router = APIRouter()
@@ -160,7 +160,6 @@ def list_jobs():
                 CompareResult.session_id == s.id, CompareResult.matched == 1
             ).count()
 
-            # >>> ส่ง ISO8601 + 'Z' เสมอ (ถือว่า created_at เป็น UTC)
             ca = s.created_at
             if ca is not None:
                 if ca.tzinfo is None:
@@ -172,7 +171,7 @@ def list_jobs():
 
             out.append({
                 "job_id": s.id,
-                "created_at": created_iso,   # <<< เปลี่ยนมาใช้ค่านี้
+                "created_at": created_iso,
                 "pinned": bool(s.pinned),
                 "total_records": total,
                 "matched_total": matched,
@@ -189,7 +188,7 @@ def get_records(
     project: str = Query(default=""),
     province: str = Query(default=""),
     customer: str = Query(default=""),
-    status: str = Query(default=""),  # Found/Unmatched
+    status: str = Query(default=""),
     q: str = Query(default=""),
 ):
     db: Session = SessionLocal()
