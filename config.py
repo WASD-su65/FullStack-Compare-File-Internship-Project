@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-MASTER_EXCEL_PATH = os.getenv("MASTER_EXCEL_PATH", "NT.CSOC-MS.xlsx")
+MASTER_EXCEL_PATH = os.getenv("MASTER_EXCEL_PATH", "Your-File.xlsx")
 SHEET_NAME = os.getenv("SHEET_NAME", "Sheet1")
 KEY_COLUMN = os.getenv("KEY_COLUMN", "เลขวงจร")
 
