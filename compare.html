@@ -229,7 +229,7 @@
 
         <div class="card" id="adminCard">
           <h2>Admin</h2>
-          <div class="small">ใส่ Token (X-Admin-Token) เพื่อเปิดโหมดลบหลายงาน</div>
+          <div class="small">use Token (X-Admin-Token) Open Delete Job list</div>
           <div style="display:flex;gap:8px;margin-top:6px">
             <input id="adminToken" type="password" placeholder="X-Admin-Token" style="flex:1">
             <button id="btnAdminToggle">Enable</button>
@@ -256,24 +256,24 @@
 
       <section id="viewRecords">
         <div class="toolbar">
-          <select id="selStatus" title="กรองตามสถานะ">
+          <select id="selStatus" title="use fill type">
             <option value="">— Every Status —</option>
             <option value="Found">Matched</option>
             <option value="Unmatched">Unmatched</option>
           </select>
 
-          <select id="selField" title="ค้นหาในฟิลด์">
+          <select id="selField" title="search on fill>
             <option value="all">— Search fill —</option>
             <option value="customer">Customer</option>
             <option value="project">Project</option>
             <option value="province">Province</option>
             <option value="type">Type</option>
-            <option value="circuit_number">Circult_number</option>
+            <option value="circuit_number">Circuit_number</option>
           </select>
 
-          <input id="searchBox" type="search" placeholder="พิมพ์เพื่อค้นหา…" />
-          <button id="btnApply">กรอง</button>
-          <button id="btnClear">ล้างตัวกรอง</button>
+          <input id="searchBox" type="search" placeholder="type for searching" />
+          <button id="btnApply">Filter</button>
+          <button id="btnClear">Clear Filter</button>
           <span class="status" id="statusMsg"></span>
         </div>
 
@@ -292,7 +292,7 @@
         <div class="tablewrap">
           <table>
             <thead>
-              <tr><th>#</th><th>ลูกค้า</th><th>ชื่อโครงการ</th><th>จังหวัด</th><th>ประเภท</th><th>เลขวงจร</th><th>สถานะ</th></tr>
+              <tr><th>#</th><th>Customer</th><th>Project</th><th>Province</th><th>Type</th><th>Circuit_number</th><th>Status</th></tr>
             </thead>
             <tbody id="tbody"></tbody>
           </table>
@@ -300,30 +300,30 @@
 
         <div class="meta-row">
           <div class="small" id="recordsMeta">—</div>
-          <button id="btnMoreRecords">แสดงเพิ่ม</button>
+          <button id="btnMoreRecords">Show more</button>
         </div>
       </section>
 
       <section id="viewSummary" class="hidden">
         <div class="summarybar">
-          <input id="sumCustomerSearch" type="search" placeholder="ค้นหาชื่อลูกค้า…" list="dlCustomers"/>
+          <input id="sumCustomerSearch" type="search" placeholder="Search Customer" list="dlCustomers"/>
           <datalist id="dlCustomers"></datalist>
 
-          <input id="sumProvinceInput" type="search" placeholder="เพิ่มจังหวัด…" list="dlProvincesSummaryMulti" style="min-width:220px">
+          <input id="sumProvinceInput" type="search" placeholder="add province" list="dlProvincesSummaryMulti" style="min-width:220px">
           <datalist id="dlProvincesSummaryMulti"></datalist>
-          <button id="btnSumAddProvince">เพิ่มจังหวัด</button>
-          <button id="btnSumClearProvinces">ล้างจังหวัด</button>
-          <span class="small">จังหวัดที่เลือก:</span>
+          <button id="btnSumAddProvince">add province</button>
+          <button id="btnSumClearProvinces">clear province</button>
+          <span class="small">province select:</span>
           <div id="sumProvinceChips" class="chips"></div>
 
-          <button id="btnClearSummary">ล้างทั้งหมด</button>
+          <button id="btnClearSummary">clear all</button>
           <span class="status" id="sumStatusMsg"></span>
         </div>
 
         <div class="tablewrap">
           <table>
             <thead>
-              <tr><th>#</th><th>ลูกค้า</th><th>จังหวัด</th><th>ประเภท</th><th>จำนวนวงจร</th><th>เลขวงจร</th></tr>
+              <tr><th>#</th><th>customer</th><th>province</th><th>type</th><th>circuit_norm</th><th>circuit_number</th></tr>
             </thead>
             <tbody id="tbodyOurSummary"></tbody>
           </table>
@@ -331,17 +331,17 @@
 
         <div class="meta-row">
           <div class="small" id="summaryMeta">—</div>
-          <button id="btnMoreSummary">แสดงเพิ่ม</button>
+          <button id="btnMoreSummary">Show more</button>
         </div>
       </section>
 
       <section id="viewReport" class="hidden">
         <div class="summarybar">
-          <input id="reportProvinceInput" type="search" placeholder="เพิ่มจังหวัด…" list="dlProvincesReport" style="min-width:220px">
+          <input id="reportProvinceInput" type="search" placeholder="add province" list="dlProvincesReport" style="min-width:220px">
           <datalist id="dlProvincesReport"></datalist>
-          <button id="btnAddProvince">เพิ่มจังหวัด</button>
-          <button id="btnClearReportFilters">ล้างฟิลเตอร์</button>
-          <span class="small">จังหวัดที่เลือก:</span>
+          <button id="btnAddProvince">add province</button>
+          <button id="btnClearReportFilters">clear filter</button>
+          <span class="small">province select:</span>
           <div id="reportProvinceChips" class="chips"></div>
           <span class="status" id="reportStatusMsg"></span>
         </div>
@@ -349,11 +349,11 @@
         <div id="reportCapture">
           <div class="kpi kpi-report">
             <div class="card metric">
-              <div class="title">ลูกค้า</div>
+              <div class="title">customer</div>
               <div class="value" id="kpiAffectedCustomers">0</div>
             </div>
             <div class="card metric">
-              <div class="title">จำนวนเหตุเสีย</div>
+              <div class="title">number_error</div>
               <div class="value" id="kpiAffectedCircuits">0</div>
             </div>
             <div class="card" id="serviceCard">
@@ -363,8 +363,8 @@
               <div class="svc-row"><span>Voice</span><strong id="kpiVoice">0</strong></div>
             </div>
             <div class="card" id="provinceCard">
-              <div class="title">จังหวัด</div>
-              <div class="value">ทั้งหมด <span id="kpiAffectedProvinces">0</span> จังหวัด</div>
+              <div class="title">province</div>
+              <div class="value">all <span id="kpiAffectedProvinces">0</span> province</div>
               <div id="kpiProvinceList" class="province-box"></div>
             </div>
           </div>
@@ -381,7 +381,7 @@
           </div>
 
           <div class="card insights-card" style="margin-top:12px">
-            <div class="title">Hotspots (Top 5 จังหวัด)</div>
+            <div class="title">Hotspots (Top 5 province)</div>
             <div id="hotspots"></div>
           </div>
 
@@ -394,7 +394,7 @@
 
   <div id="loadingOverlay">
     <div class="box">
-      <span class="spinner"></span><span id="loadingText">กำลังประมวลผล…</span>
+      <span class="spinner"></span><span id="loadingText">Processing...</span>
     </div>
   </div>
 
@@ -483,7 +483,7 @@ function severityColor(ratio){
 function checkCompareEnable(){ btnCompare.disabled=!fileCompare.files.length; }
 fileMaster.onchange=checkCompareEnable; fileCompare.onchange=checkCompareEnable;
 
-function showLoading(text='กำลังประมวลผล…'){ loadingText.textContent=text; loadingOverlay.style.display='flex'; }
+function showLoading(text='Processing...'){ loadingText.textContent=text; loadingOverlay.style.display='flex'; }
 function hideLoading(){ loadingOverlay.style.display='none'; }
 
 const bangkokFormatter = new Intl.DateTimeFormat('th-TH', {
@@ -506,7 +506,7 @@ function _normStr(s){ return ((s??'')+'').trim(); }
 /* ---------- Upload Compare ---------- */
 btnCompare.onclick=async()=>{ 
   try{
-    showLoading('กำลังอัปโหลดและประมวลผล…');
+    showLoading('Uploading and Processing...');
     btnCompare.disabled = true;
     const fd=new FormData();
     if(fileMaster.files.length) fd.append('master_file',fileMaster.files[0]);
@@ -518,16 +518,16 @@ btnCompare.onclick=async()=>{
     }
     await loadJobs();
     fileMaster.value = ''; fileCompare.value = ''; checkCompareEnable();
-    loadingText.textContent='สำเร็จ!'; setTimeout(hideLoading, 800);
+    loadingText.textContent='Complete!'; setTimeout(hideLoading, 800);
   }catch(e){
-    loadingText.textContent='เปรียบเทียบล้มเหลว';
-    setTimeout(()=>{ hideLoading(); alert('เปรียบเทียบล้มเหลว: '+e.message); }, 300);
+    loadingText.textContent='Compare fail';
+    setTimeout(()=>{ hideLoading(); alert('Compare fail: '+e.message); }, 300);
   }finally{ btnCompare.disabled = false; }
 };
 
 /* ---------- Jobs ---------- */
 async function loadJobs(){
-  jobsList.innerHTML='<li class="small">กำลังโหลด...</li>';
+  jobsList.innerHTML='<li class="small">Uploading...</li>';
   try{
     const r=await fetch(`${API_BASE}/jobs`);
     if(!r.ok) throw new Error(await r.text());
@@ -582,19 +582,19 @@ function setAdminUI(enabled, msg){
   renderJobs(true);
 }
 btnAdminToggle.onclick = async ()=>{
-  if(ADMIN_MODE){ ADMIN_TOKEN_VAL=''; adminToken.value=''; setAdminUI(false,'ปิดโหมด'); return; }
+  if(ADMIN_MODE){ ADMIN_TOKEN_VAL=''; adminToken.value=''; setAdminUI(false,'Mode off'); return; }
   const token=(adminToken.value||'').trim();
-  if(!token){ setAdminUI(false,'กรุณาใส่ token'); return; }
+  if(!token){ setAdminUI(false,'use token'); return; }
   const ok=await adminCheck(token);
-  if(ok){ ADMIN_TOKEN_VAL=token; setAdminUI(true,'Token ถูกต้อง'); }
-  else { ADMIN_TOKEN_VAL=''; setAdminUI(false,'Token ไม่ถูกต้อง'); alert('Token ไม่ถูกต้อง'); }
+  if(ok){ ADMIN_TOKEN_VAL=token; setAdminUI(true,'Token Correct'); }
+  else { ADMIN_TOKEN_VAL=''; setAdminUI(false,'Token Incorrect'); alert('Token Incorrect'); }
 };
 
 btnBulkDelete.onclick = async ()=>{
-  if(!ADMIN_MODE){ alert('กรุณาใส่ Admin token ก่อน'); return; }
+  if(!ADMIN_MODE){ alert('use Admin token first'); return; }
   const ids = Array.from(qsa('.job-select:checked')).map(cb=>parseInt(cb.dataset.job,10)).filter(Boolean);
-  if(!ids.length){ alert('ยังไม่ได้เลือกงาน'); return; }
-  if(!confirm(`ยืนยันลบ ${ids.length} jobs? (ข้ามที่ pinned)`)) return;
+  if(!ids.length){ alert('not select Job'); return; }
+  if(!confirm(`ยืนยันลบ ${ids.length} jobs? (skip pinned)`)) return;
   try{
     const res = await fetch(`${API_BASE}/admin/jobs/bulk?token=${encodeURIComponent(ADMIN_TOKEN_VAL)}`, {
       method: 'DELETE', headers: { 'Content-Type': 'application/json' },
@@ -602,9 +602,9 @@ btnBulkDelete.onclick = async ()=>{
     });
     if(!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    alert(`ลบแล้ว: ${data.deleted.length} งาน, ข้าม: ${data.skipped.length}`);
+    alert(`ลบแล้ว: ${data.deleted.length} Job, Skip: ${data.skipped.length}`);
     await loadJobs();
-  }catch(e){ alert('ลบล้มเหลว: ' + e.message); }
+  }catch(e){ alert('Delete error: ' + e.message); }
 };
 
 function renderJobs(forceReset=false){
@@ -907,10 +907,10 @@ function renderSummaryPaged(){
 }
 
 function buildAndRenderSummary(){
-  sumStatusMsg.textContent='กำลังสรุป…';
+  sumStatusMsg.textContent='Summarizing...';
   rebuildSummaryRows();
   renderSummaryPaged();
-  sumStatusMsg.textContent='พร้อม';
+  sumStatusMsg.textContent='Ready';
 }
 btnMoreSummary.onclick=()=>renderSummaryPaged();
 btnClearSummary.onclick=()=>{
@@ -1163,7 +1163,7 @@ function renderProvinceList(rep){
 }
 
 async function rebuildAndRenderReport(){
-  reportStatusMsg.textContent='กำลังคำนวณ…';
+  reportStatusMsg.textContent='Processing...';
 
   const rep = reportFrom(allRecords);
 
@@ -1254,12 +1254,12 @@ btnExportXLSX.onclick = ()=>{
   if(isReportActive()){
     const rep = reportFrom(allRecords);
     const rows=[{
-      'จำนวนลูกค้า': rep.customers,
-      'จำนวนเหตุเสีย': rep.circuits,
+      'number_customer': rep.customers,
+      'circuit_norm': rep.circuits,
       'Data': rep.services.Data || 0,
       'Broadband': rep.services.Broadband || 0,
       'Voice': rep.services.Voice || 0,
-      'จังหวัด': (rep.provinceCounts||[]).map(x=>`${x.province}(${x.count})`).join(', ')
+      'province': (rep.provinceCounts||[]).map(x=>`${x.province}(${x.count})`).join(', ')
     }];
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
@@ -1268,8 +1268,8 @@ btnExportXLSX.onclick = ()=>{
   }else if(isSummaryActive()){
     rebuildSummaryRows();
     const rows = SUMMARY_CACHE_ROWS.map((r,idx)=>({
-      '#': idx+1, 'ลูกค้า': r.cust || '', 'จังหวัด': r.prov || '',
-      'ประเภท': r.typeText || '', 'จำนวนวงจร': r.count ?? 0, 'เลขวงจร': r.cirText || ''
+      '#': idx+1, 'customer': r.cust || '', 'province': r.prov || '',
+      'type': r.typeText || '', 'circuit_norm': r.count ?? 0, 'circuit_number': r.cirText || ''
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
@@ -1278,12 +1278,12 @@ btnExportXLSX.onclick = ()=>{
   }else{
     const rows = RECORDS_FILTERED_CACHE.map((r,idx)=>({
       '#': idx+1, 
-      'ลูกค้า': _normStr(r.customer) || '—', 
-      'ชื่อโครงการ': _normStr(r.project) || '—',
-      'จังหวัด': _normStr(r.province) || '—',
-      'ประเภท': _normStr(r.service_category ?? r.type ?? '') || '—',
-      'เลขวงจร': _normStr(r.circuit_number) || (r.circuit_norm || '—'),
-      'สถานะ': r.status || ''
+      'customer': _normStr(r.customer) || '—', 
+      'project': _normStr(r.project) || '—',
+      'province': _normStr(r.province) || '—',
+      'type': _normStr(r.service_category ?? r.type ?? '') || '—',
+      'circuit_number': _normStr(r.circuit_number) || (r.circuit_norm || '—'),
+      'status': r.status || ''
     }));
     const ws = XLSX.utils.json_to_sheet(rows);
     const wb = XLSX.utils.book_new();
@@ -1294,7 +1294,7 @@ btnExportXLSX.onclick = ()=>{
 
 /* Export Summary XLSX (server) — คงเดิม */
 btnExportSummary.onclick = ()=>{
-  if(!currentJob){ alert('กรุณาเลือก Job ก่อน'); return; }
+  if(!currentJob){ alert('Select Job fist'); return; }
   window.location = `${API_BASE}/export/summary?job_id=${currentJob}`;
 };
 
@@ -1302,7 +1302,7 @@ btnExportSummary.onclick = ()=>{
 btnExportPNG.onclick = async ()=>{
   try{
     if (qs('#viewReport').classList.contains('hidden')) {
-      alert('เปิดแท็บ Report ก่อน'); 
+      alert('Open Report Tab first'); 
       return;
     }
     const el = qs('#reportCapture');
@@ -1318,7 +1318,7 @@ btnExportPNG.onclick = async ()=>{
       a.click();
       URL.revokeObjectURL(a.href);
     }, 'image/png');
-  }catch(e){ alert('Export PNG ล้มเหลว: '+e.message); }
+  }catch(e){ alert('Export PNG fail: '+e.message); }
 };
 
 /* Export Report PDF (A4 แนวนอน เฉพาะส่วน capture) */
@@ -1326,7 +1326,7 @@ btnExportPDF.onclick = async ()=>{
   try{
     const container = qs('#reportCapture');
     if (qs('#viewReport').classList.contains('hidden')) {
-      alert('เปิดแท็บ Report ก่อน'); 
+      alert('Open Report Tab first'); 
       return;
     }
 
@@ -1359,7 +1359,7 @@ btnExportPDF.onclick = async ()=>{
     pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
     pdf.save(`report_${currentJob || 'latest'}_${nowTag()}.pdf`);
   }catch(e){
-    alert('Export PDF ล้มเหลว: ' + e.message);
+    alert('Export PDF fail: ' + e.message);
   }
 };
 
