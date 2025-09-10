@@ -200,9 +200,9 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
         info    = master_dict.get(circuit_norm)
         matched = 1 if info is not None else 0
 
-        customer       = _format_text((info or {}).get("ลูกค้า"))
-        project_name   = _format_text((info or {}).get("ชื่อโครงการ"))
-        province       = _format_text((info or {}).get("จังหวัด"))
+        customer       = _format_text((info or {}).get("customer"))
+        project_name   = _format_text((info or {}).get("project"))
+        province       = _format_text((info or {}).get("province"))
         service_type   = _pick_service_type(info or {})
         service_cat    = _derive_service_category(circuit_norm, service_type)
 
