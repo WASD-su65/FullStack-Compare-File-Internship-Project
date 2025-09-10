@@ -332,9 +332,9 @@ def export_summary(job_id: int = Query(...)):
             rows_out.append({
                 "#": i, "ลูกค้า": cust, "ชื่อโครงการ": proj,
                 "SLA": sla_lookup.get(proj_key), "จังหวัด": prov,
-                "ประเภท": f"{cat} : {len(data['circuits'])}",
-                "จำนวนวงจร": len(data["circuits"]),
-                "เลขวงจร": ", ".join(sorted(data["circuits"])),
+                "type": f"{cat} : {len(data['circuits'])}",
+                "circuit_norm": len(data["circuits"]),
+                "circuit_number": ", ".join(sorted(data["circuits"])),
             })
 
         df = pd.DataFrame(rows_out)
