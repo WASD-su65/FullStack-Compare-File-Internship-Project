@@ -7,7 +7,7 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 MASTER_EXCEL_PATH = os.getenv("MASTER_EXCEL_PATH", "Your-File.xlsx")
 SHEET_NAME = os.getenv("SHEET_NAME", "Sheet1")
-KEY_COLUMN = os.getenv("KEY_COLUMN", "Cycle-Number")
+KEY_COLUMN = os.getenv("KEY_COLUMN", "circuit_number")
 
 RETENTION_DAYS = int(os.getenv("RETENTION_DAYS", "90"))
 CLEANUP_BATCH_SIZE = int(os.getenv("CLEANUP_BATCH_SIZE", "10000"))
