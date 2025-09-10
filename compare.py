@@ -330,8 +330,8 @@ def export_summary(job_id: int = Query(...)):
         for i, ((cust, proj, prov, cat), data) in enumerate(export_dict.items(), start=1):
             proj_key = (proj or "").strip().lower()
             rows_out.append({
-                "#": i, "ลูกค้า": cust, "ชื่อโครงการ": proj,
-                "SLA": sla_lookup.get(proj_key), "จังหวัด": prov,
+                "#": i, "customer": cust, "project": proj,
+                "SLA": sla_lookup.get(proj_key), "province": prov,
                 "type": f"{cat} : {len(data['circuits'])}",
                 "circuit_norm": len(data["circuits"]),
                 "circuit_number": ", ".join(sorted(data["circuits"])),
