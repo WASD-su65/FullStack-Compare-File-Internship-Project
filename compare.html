@@ -195,7 +195,7 @@
       <button id="btnExportPNG" disabled>Download PNG</button>
       <button id="btnExportPDF" disabled>Download PDF</button>
 
-      <button id="themeToggleBtn" title="สลับโหมด">สลับธีม</button>
+      <button id="themeToggleBtn" title="Light Mode">Switch Theme</button>
     </div>
   </header>
 
@@ -203,13 +203,13 @@
     <aside>
       <div class="card">
         <h2>Upload</h2>
-        <div class="small">ถ้าไม่อัปโหลด Master จะใช้ไฟล์ default บนเซิร์ฟเวอร์</div>
+        <div class="small">if you upload Master-File it will be use File on sever</div>
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px">
           <label>Master (Memo): <input type="file" id="fileMaster" accept=".csv,.xlsx" /></label>
           <label>Compare (Solarwind): <input type="file" id="fileCompare" accept=".csv,.xlsx" /></label>
           <button id="btnCompare" disabled>Compare</button>
         </div>
-        <div class="small" style="margin-top:6px">หลัง Compare สำเร็จ ระบบจะสร้าง Job ใหม่และโหลดข้อมูลให้ทันที</div>
+        <div class="small" style="margin-top:6px">after compare complete system will be create Job list and create new Data</div>
       </div>
 
       <div class="card jobs">
@@ -242,7 +242,7 @@
 
         <div class="meta">
           <div class="small" id="jobsMeta">—</div>
-          <button id="btnJobsMore" class="">แสดงเพิ่ม</button>
+          <button id="btnJobsMore" class="">Show more</button>
         </div>
       </div>
     </aside>
@@ -257,18 +257,18 @@
       <section id="viewRecords">
         <div class="toolbar">
           <select id="selStatus" title="กรองตามสถานะ">
-            <option value="">— ทุกสถานะ —</option>
+            <option value="">— Every Status —</option>
             <option value="Found">Matched</option>
             <option value="Unmatched">Unmatched</option>
           </select>
 
           <select id="selField" title="ค้นหาในฟิลด์">
-            <option value="all">— ค้นหาทุกฟิลด์ —</option>
-            <option value="customer">ลูกค้า</option>
-            <option value="project">ชื่อโครงการ</option>
-            <option value="province">จังหวัด</option>
-            <option value="type">ประเภท</option>
-            <option value="circuit_number">เลขวงจร</option>
+            <option value="all">— Search fill —</option>
+            <option value="customer">Customer</option>
+            <option value="project">Project</option>
+            <option value="province">Province</option>
+            <option value="type">Type</option>
+            <option value="circuit_number">Circult_number</option>
           </select>
 
           <input id="searchBox" type="search" placeholder="พิมพ์เพื่อค้นหา…" />
