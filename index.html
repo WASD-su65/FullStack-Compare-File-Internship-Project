@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSOC System</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="shortcut icon" href="/static/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <span class="brand-icon">🏢</span>
+                    <span class="brand-text">CSOC System</span>
+                </div>
+
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-module="welcome">
+                        <span class="nav-icon">🏠</span>
+                        Homepage
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-module="compare">
+                        <span class="nav-icon">📊</span>
+                        Compare System
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-module="text-replace">
+                        <span class="nav-icon">📝</span>
+                        Text Replace
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <!-- Content Area -->
+        <main class="content-area">
+            <!-- Welcome Screen -->
+            <div id="welcome" class="module-content active">
+                <div class="dashboard-header">
+                    <div class="header-content">
+                        <div class="header-left">
+                            <button id="btnSidebarToggle" class="sidebar-toggle">☰</button>
+                            <h1>Dashboard</h1>
+                        </div>
+                        <div class="header-right">
+                            <div id="userProfile"></div>
+                            <button id="btnTheme" class="theme-btn" onclick="toggleTheme()">
+                                <span class="theme-icon">🌙</span>
+                                <span class="theme-text">Dark</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="welcome-screen">
+                    <div class="welcome-content">
+                        <h2>ยินดีต้อนรับสู่ CSOC System</h2>
+                        <p>ระบบจัดการข้อมูลและเปรียบเทียบไฟล์สำหรับ CSOC</p>
+                    </div>
+                    
+                    <div class="system-stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="compareJobs">โหลด...</div>
+                            <div class="stat-label">Compare Jobs</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">2</div>
+                            <div class="stat-label">Available Modules</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">✅</div>
+                            <div class="stat-label">System Status</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="lastUpdate">-</div>
+                            <div class="stat-label">Last Update</div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="action-grid">
+                            <div class="action-card" onclick="switchModule('compare')">
+                                <div class="action-icon">📊</div>
+                                <div class="action-title">เปรียบเทียบข้อมูล</div>
+                                <div class="action-desc">อัปโหลดและเปรียบเทียบไฟล์ Master กับ Solarwind</div>
+                            </div>
+                            <div class="action-card" onclick="switchModule('text-replace')">
+                                <div class="action-icon">📝</div>
+                                <div class="action-title">แทนที่ข้อความ</div>
+                                <div class="action-desc">แทนที่ข้อความในไฟล์ Word และ Excel หลายไฟล์</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-info">
+                        <h3>Server Information</h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-label">CPU Usage</div>
+                                <div class="info-value" id="cpuUsage">โหลด...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Memory</div>
+                                <div class="info-value" id="memoryUsage">โหลด...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Disk Space</div>
+                                <div class="info-value" id="diskUsage">โหลด...</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">CPU Cores</div>
+                                <div class="info-value" id="cpuCores">โหลด...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Compare System Module -->
+            <div id="compare" class="module-content">
+                <iframe src="/compare.html" class="module-frame"></iframe>
+            </div>
+            
+            <!-- Text Replace Module -->
+            <div id="text-replace" class="module-content">
+                <iframe src="/text-replace.html" class="module-frame"></iframe>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="/static/js/security.utils.js"></script>
+    <script src="/static/js/auth.utils.js"></script>
+    <script src="/static/js/dashboard.navigation.js"></script>
+    <script src="/static/js/dashboard.stats.js"></script>
+    <script src="/static/js/dashboard.sidebar.js"></script>
+    <script src="/static/js/dashboard.theme.js"></script>
+    <script src="/static/js/dashboard.main.js"></script>
+    <script>
+        // Initialize user profile
+        document.addEventListener('DOMContentLoaded', () => {
+            const userProfileElement = document.getElementById('userProfile');
+            if (userProfileElement && AuthManager.isAuthenticated()) {
+                userProfileElement.innerHTML = AuthManager.createUserProfile();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+/* Light Theme overrides — minimal, readable, premium.
+   ไม่แตะ layout/logic เดิม */
+
+:root { color-scheme: light dark; }
+
+/* ===== LIGHT THEME ===== */
+html[data-theme="light"]{
+  /* พื้นหลัง: สว่างสำหรับ light theme */
+  --bg: #fbfbfc;
+  --panel: #ffffff;
+  --card: #f6f7f9;
+
+  /* ตัวอักษร: เข้มสำหรับ light theme */
+  --text-strong: #0f172a;
+  --text: #1f2937;
+  --text-muted: rgb(84,88,89);      /* master gray สำหรับหัวข้อรอง/label */
+
+  /* Accent / success */
+  --accent: rgb(255,209,0);         /* master yellow */
+  --ok: #10b981;
+
+  /* ชิป/พื้นย่อย */
+  --chip-bg: #eef2f7;
+  --tint-emerald: rgba(16,185,129,.08);
+  --border-color: #e5e7eb;
+
+  /* Chart palette (สำหรับคอมโพเนนต์ที่ดึง default) */
+  --svc-data: hsl(217 91% 60%);
+  --svc-broadband: hsl(42 95% 50%);
+  --svc-voice: hsl(330 85% 65%);
+
+  /* Province palette (comma-separated) */
+  --prov-palette:
+    hsl(217 91% 60%), hsl(42 95% 50%), hsl(330 85% 65%),
+    hsl(258 89% 75%), hsl(199 92% 60%), hsl(351 95% 72%),
+    hsl(271 94% 75%), hsl(0 94% 78%),  hsl(217 92% 75%),
+    hsl(292 92% 75%), hsl(49 94% 55%), hsl(354 93% 80%),
+    hsl(234 86% 75%), hsl(45 94% 65%);
+}
+
+/* -------- พื้นผิวหลัก -------- */
+html[data-theme="light"] body{
+  background: var(--bg);
+  color: var(--text);
+}
+html[data-theme="light"] aside{
+  background: var(--panel);
+  border-color: #e5e7eb;
+}
+html[data-theme="light"] .card{
+  background: var(--card);
+  border: 1px solid #e5e7eb;
+  color: var(--text);
+}
+html[data-theme="light"] .layout{
+  background: var(--bg);
+}
+html[data-theme="light"] main{
+  background: var(--bg);
+}
+
+/* -------- Header: light theme -------- */
+html[data-theme="light"] header{
+  background: rgb(84,88,89);
+  color: #ffffff;
+  border-bottom: 1px solid #d1d5db;
+}
+html[data-theme="light"] header h1{ color:#ffffff; }
+html[data-theme="light"] header button{
+  background:#ffffff;
+  color:#111827;
+  border:1px solid #e5e7eb;
+}
+html[data-theme="light"] header button:hover{ border-color:#cbd5e1; }
+
+/* -------- ตัวอักษร -------- */
+html[data-theme="light"] .title{ color: var(--text-strong); }
+html[data-theme="light"] .small{ color: var(--text); }  /* ปรับให้เข้มขึ้น อ่านชัด */
+html[data-theme="light"] a,
+html[data-theme="light"] .accent{ color: var(--accent); }
+html[data-theme="light"] .status{ color: var(--text-muted); }
+html[data-theme="light"] h2{ color: var(--text-muted); }
+html[data-theme="light"] .meta{ color: var(--text-muted); }
+
+/* -------- Inputs & Buttons -------- */
+html[data-theme="light"] button,
+html[data-theme="light"] select,
+html[data-theme="light"] input{
+  background:#ffffff;
+  color:var(--text);
+  border:1px solid #e5e7eb;
+}
+html[data-theme="light"] button:hover{ border-color:#cbd5e1; }
+html[data-theme="light"] input::placeholder{ color: #9aa3af; }
+
+/* -------- Tables & dividers -------- */
+html[data-theme="light"] table{
+  color: var(--text);
+  border-color: #e5e7eb;
+}
+html[data-theme="light"] thead th{
+  background: #f3f4f6;
+  color: var(--text-strong);
+}
+html[data-theme="light"] .divider,
+html[data-theme="light"] .hr{ border-color:#e5e7eb; }
+
+/* -------- Chips/tag -------- */
+html[data-theme="light"] .chips .chip,
+html[data-theme="light"] .chip{
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid #e5e7eb;
+}
+html[data-theme="light"] .badge{
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid #e5e7eb;
+}
+html[data-theme="light"] .badge.ok{
+  background: rgba(16,185,129,0.1);
+  color: #059669;
+  border-color: #10b981;
+}
+html[data-theme="light"] .badge.warn{
+  background: rgba(245,158,11,0.1);
+  color: #d97706;
+  border-color: #f59e0b;
+}
+html[data-theme="light"] .summarybar{
+  background: transparent;
+}
+
+/* -------- Jobs list -------- */
+html[data-theme="light"] .jobs li{
+  background: var(--card) !important;
+  color: var(--text);
+}
+html[data-theme="light"] .jobs li.active{ background: #eef2f7 !important; }
+
+/* -------- Tabs -------- */
+html[data-theme="light"] .tabs button.active{
+  background: #f3f4f6;
+  color: var(--text-strong);
+}
+html[data-theme="light"] .tabs button{ color: var(--text); }
+
+/* -------- KPI / Report visibility -------- */
+html[data-theme="light"] .kpi .value,
+html[data-theme="light"] .kpi .metric .value,
+html[data-theme="light"] #kpiAffectedCustomers,
+html[data-theme="light"] #kpiAffectedCircuits,
+html[data-theme="light"] #serviceCard .svc-row strong{
+  color: var(--text-strong);   /* บังคับตัวเลขให้เข้ม อ่านง่าย */
+}
+html[data-theme="light"] .kpi .card{
+  background: linear-gradient(180deg, rgba(148,163,184,0.05), transparent);
+  border: 1px solid #e5e7eb;
+}
+html[data-theme="light"] .kpi .card:hover{
+  border-color: #cbd5e1;
+}
+html[data-theme="light"] .kpi .card.active{
+  border-color: var(--accent);
+  background: linear-gradient(180deg, rgba(255,209,0,0.1), transparent);
+}
+html[data-theme="light"] #cardMatched.active{
+  border-color: #10b981;
+  background: linear-gradient(180deg, rgba(16,185,129,0.1), transparent);
+}
+html[data-theme="light"] #cardUnmatched.active{
+  border-color: #f59e0b;
+  background: linear-gradient(180deg, rgba(245,158,11,0.1), transparent);
+}
+html[data-theme="light"] .chart-title,
+html[data-theme="light"] .metric .title,
+html[data-theme="light"] #serviceCard .title,
+html[data-theme="light"] #provinceCard .title{
+  color: var(--text-muted);
+}
+
+/* -------- รายการ province box / insights -------- */
+html[data-theme="light"] #kpiProvinceList{ color: var(--text); }
+html[data-theme="light"] .insights-card .title{ color: var(--text-muted); }
+
+/* -------- Text Replace File Upload -------- */
+html[data-theme="light"] #dropZone{
+  background: var(--card) !important;
+  border: 2px dashed #cbd5e1 !important;
+  color: var(--text) !important;
+}
+html[data-theme="light"] #dropZone:hover{
+  border-color: var(--accent) !important;
+  background: #f9fafb !important;
+}
+
+/* File list items - target the dynamic content */
+html[data-theme="light"] #fileList > div,
+html[data-theme="light"] #fileList .small{
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Progress bar container and fill */
+html[data-theme="light"] #progressBar > div:first-child{
+  background: #e5e7eb !important;
+}
+html[data-theme="light"] #progressFill{
+  background: var(--accent) !important;
+}
+html[data-theme="light"] #progressText{
+  color: var(--text) !important;
+}
+
+/* Results section */
+html[data-theme="light"] #resultsSection{
+  background: var(--card) !important;
+  border: 1px solid #e5e7eb !important;
+}
+html[data-theme="light"] #resultsMessage{
+  color: var(--text) !important;
+}
+
+/* Process status messages */
+html[data-theme="light"] #processStatus{
+  color: var(--text) !important;
+}
+
+/* Text Replace section labels */
+html[data-theme="light"] #viewTextReplace .small{
+  color: var(--text-muted) !important;
+}
+html[data-theme="light"] #viewTextReplace h2,
+html[data-theme="light"] #viewTextReplace h3{
+  color: var(--text-strong) !important;
+}
+
+/* Download button in results */
+html[data-theme="light"] #btnDownloadZip{
+  background: var(--accent) !important;
+  color: var(--text-strong) !important;
+  border: 1px solid var(--accent) !important;
+}
+
+/* Button groups and filter buttons for light theme */
+html[data-theme="light"] .btn{
+  background: #ffffff;
+  color: var(--text);
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+html[data-theme="light"] .btn:hover{
+  border-color: var(--accent);
+  background: #f9fafb;
+}
+html[data-theme="light"] .btn.active{
+  background: var(--accent);
+  color: #111827;
+  border-color: var(--accent);
+}
+html[data-theme="light"] .btn-group{
+  display: flex;
+  gap: 4px;
+}
+html[data-theme="light"] .mf-group label{
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Loading overlay for light theme */
+html[data-theme="light"] #loadingOverlay{
+  background: rgba(255,255,255,0.8) !important;
+}
+html[data-theme="light"] #loadingOverlay .box{
+  background: var(--card) !important;
+  border: 1px solid #e5e7eb !important;
+  color: var(--text) !important;
+}
+html[data-theme="light"] #loadingOverlay .spinner{
+  border-color: #e5e7eb !important;
+  border-top-color: var(--accent) !important;
+}
+html[data-theme="light"] #loadingText{
+  color: var(--text) !important;
+}
+
+/* Theme toggle button (ถ้ามี) */
+html[data-theme="light"] #btnTheme{
+  background:#ffffff;
+  border-color:#e5e7eb;
+  color:#111827;
+}
+
+/* ===== DARK THEME ===== */
+html[data-theme="dark"]{
+  /* พื้นหลัง: เข้มเหมือน compare.css */
+  --bg: #0b1220;
+  --panel: #101826;
+  --card: #0f172a;
+
+  /* ตัวอักษร: เหมือน compare.css */
+  --text-strong: #ffffff;           /* สีหัวข้อ統一 */
+  --text: #ffffff;                  /* เนื้อความหลัก */
+  --text-muted: #cbd5e1;            /* สี small text */
+
+  /* Accent / success เหมือนเดิม */
+  --accent: rgb(255,209,0);         /* สีเหลืองบริษัท */
+  --ok: #10b981;
+
+  /* ชิป/พื้นย่อย */
+  --chip-bg: #0e1a2b;
+  --tint-emerald: rgba(16,185,129,.12);
+  --border-color: #1f2937;
+
+  /* Chart palette */
+  --svc-data: hsl(217 91% 70%);
+  --svc-broadband: hsl(42 95% 60%);
+  --svc-voice: hsl(330 85% 75%);
+
+  /* Province palette */
+  --prov-palette:
+    hsl(217 91% 70%), hsl(42 95% 60%), hsl(330 85% 75%),
+    hsl(258 89% 80%), hsl(199 92% 70%), hsl(351 95% 80%),
+    hsl(271 94% 80%), hsl(0 94% 85%),  hsl(217 92% 80%),
+    hsl(292 92% 80%), hsl(49 94% 65%), hsl(354 93% 85%),
+    hsl(234 86% 80%), hsl(45 94% 70%);
+}
+
+/* -------- พื้นผิวหลัก -------- */
+html[data-theme="dark"] body{
+  background: var(--bg);
+  color: var(--text);
+}
+html[data-theme="dark"] aside{
+  background: var(--panel);
+  border-color: #475569;
+}
+html[data-theme="dark"] .card{
+  background: var(--card);
+  border: 1px solid #475569;
+  color: var(--text);
+}
+
+/* -------- Header: เหมือน compare.css -------- */
+html[data-theme="dark"] header{
+  background: var(--panel);
+  color: var(--text);
+  border-bottom: 1px solid var(--border-color);
+}
+html[data-theme="dark"] header h1{ color: var(--text); }
+html[data-theme="dark"] header button{
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+html[data-theme="dark"] header button:hover{ border-color: #334155; }
+
+/* Sidebar toggle button */
+html[data-theme="light"] .sidebar-toggle{
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+}
+html[data-theme="light"] .sidebar-toggle:hover{ border-color: #cbd5e1; }
+
+html[data-theme="dark"] .sidebar-toggle{
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid #475569;
+}
+html[data-theme="dark"] .sidebar-toggle:hover{ border-color: #64748b; }
+
+/* -------- ตัวอักษร -------- */
+html[data-theme="dark"] .title{ color: var(--text-strong); }
+html[data-theme="dark"] .small{ color: var(--text); }
+html[data-theme="dark"] a,
+html[data-theme="dark"] .accent{ color: var(--accent); }
+
+/* -------- Inputs & Buttons -------- */
+html[data-theme="dark"] button,
+html[data-theme="dark"] select,
+html[data-theme="dark"] input{
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid #475569;
+}
+html[data-theme="dark"] button:hover{ border-color: #64748b; }
+html[data-theme="dark"] input::placeholder{ color: #64748b; }
+
+/* -------- Tables & dividers -------- */
+html[data-theme="dark"] table{
+  color: var(--text);
+  border-color: #475569;
+}
+html[data-theme="dark"] thead th{
+  background: #374151;
+  color: var(--text-strong);
+}
+html[data-theme="dark"] .divider,
+html[data-theme="dark"] .hr{ border-color: #475569; }
+
+/* -------- Chips/tag -------- */
+html[data-theme="dark"] .chips .chip,
+html[data-theme="dark"] .chip{
+  background: var(--chip-bg);
+  color: var(--text);
+  border: 1px solid #475569;
+}
+
+/* -------- Jobs list -------- */
+html[data-theme="dark"] .jobs li{
+  background: var(--card) !important;
+  color: var(--text);
+}
+html[data-theme="dark"] .jobs li.active{ background: rgba(255,209,0,0.25) !important; }
+
+/* -------- Tabs -------- */
+html[data-theme="dark"] .tabs button.active{
+  background: rgba(255,209,0,0.25);
+}
+html[data-theme="dark"] .kpi .card.active{
+  background: linear-gradient(180deg, rgba(255,209,0,0.25), rgba(255,209,0,0.1)) !important;
+}
+html[data-theme="dark"] #cardMatched.active{
+  background: linear-gradient(180deg, rgba(16,185,129,0.25), rgba(16,185,129,0.1)) !important;
+}
+html[data-theme="dark"] #cardUnmatched.active{
+  background: linear-gradient(180deg, rgba(245,158,11,0.25), rgba(245,158,11,0.1)) !important;
+}
+html[data-theme="dark"] .tabs button{ color: var(--text); }
+
+/* -------- KPI / Report visibility -------- */
+html[data-theme="dark"] .kpi .value,
+html[data-theme="dark"] .kpi .metric .value,
+html[data-theme="dark"] #kpiAffectedCustomers,
+html[data-theme="dark"] #kpiAffectedCircuits,
+html[data-theme="dark"] #serviceCard .svc-row strong{
+  color: var(--text-strong);
+}
+html[data-theme="dark"] .chart-title,
+html[data-theme="dark"] .metric .title,
+html[data-theme="dark"] #serviceCard .title,
+html[data-theme="dark"] #provinceCard .title{
+  color: var(--text-muted);
+}
+
+/* -------- รายการ province box / insights -------- */
+html[data-theme="dark"] #kpiProvinceList{ color: var(--text); }
+html[data-theme="dark"] .insights-card .title{ color: var(--text-muted); }
+
+/* -------- Text Replace File Upload -------- */
+html[data-theme="dark"] #dropZone{
+  background: var(--card) !important;
+  border: 2px dashed #64748b !important;
+  color: var(--text) !important;
+}
+html[data-theme="dark"] #dropZone:hover{
+  border-color: var(--accent) !important;
+  background: var(--chip-bg) !important;
+}
+
+/* File list items - target the dynamic content */
+html[data-theme="dark"] #fileList > div,
+html[data-theme="dark"] #fileList .small{
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border: 1px solid #475569 !important;
+}
+
+/* Progress bar container and fill */
+html[data-theme="dark"] #progressBar > div:first-child{
+  background: #475569 !important;
+}
+html[data-theme="dark"] #progressFill{
+  background: var(--accent) !important;
+}
+html[data-theme="dark"] #progressText{
+  color: var(--text) !important;
+}
+
+/* Results section */
+html[data-theme="dark"] #resultsSection{
+  background: var(--card) !important;
+  border: 1px solid #475569 !important;
+}
+html[data-theme="dark"] #resultsMessage{
+  color: var(--text) !important;
+}
+
+/* Process status messages */
+html[data-theme="dark"] #processStatus{
+  color: var(--text) !important;
+}
+
+/* Text Replace section labels */
+html[data-theme="dark"] #viewTextReplace .small{
+  color: var(--text-muted) !important;
+}
+html[data-theme="dark"] #viewTextReplace h2,
+html[data-theme="dark"] #viewTextReplace h3{
+  color: var(--text-strong) !important;
+}
+
+/* Download button in results */
+html[data-theme="dark"] #btnDownloadZip{
+  background: var(--accent) !important;
+  color: var(--text-strong) !important;
+  border: 1px solid var(--accent) !important;
+}
+
+/* Theme toggle button */
+html[data-theme="dark"] #btnTheme{
+  background: var(--panel);
+  border-color: #475569;
+  color: var(--text);
+}

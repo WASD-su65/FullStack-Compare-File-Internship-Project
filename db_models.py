@@ -1,4 +1,3 @@
-# app/db_models.py
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, Index, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
@@ -22,6 +21,7 @@ class CompareSession(Base):
         Index("ix_sessions_pinned_archived", "pinned", "archived_at"),
     )
 
+
 class CompareResult(Base):
     __tablename__ = "compare_results"
 
@@ -34,6 +34,9 @@ class CompareResult(Base):
     province = Column(String(255))
     service_type = Column(String(255))
     service_category = Column(String(255))
+
+    sla = Column(String(32))
+    branch = Column(String(255))
 
     circuit_norm = Column(String(255), index=True)
     circuit_raw = Column(Text)

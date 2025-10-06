@@ -1,0 +1,125 @@
+:root{
+      --bg:#0b1220;--panel:#101826;--muted:#334155;--text:#e5e7eb;--accent:rgb(255,209,0);--ok:#10b981;
+      --card:#0f172a;
+      --tint-emerald:rgba(16,185,129,.12); /* พื้นการ์ดโทนเขียว */
+      --title:#cffafe;                     /* สีหัวข้อ統一 */
+      --chip-bg:#0e1a2b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans Thai",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+    header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--panel);border-bottom:1px solid #1f2937}
+    h1{margin:0;font-size:18px}
+    button,select,input{background:#0f172a;color:var(--text);border:1px solid #1f2937;border-radius:10px;padding:8px 10px}
+    button{cursor:pointer}button:hover{border-color:#334155}button:disabled{opacity:.5;cursor:not-allowed}
+    .layout{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - 56px)}
+    aside{border-right:1px solid #1f2937;padding:14px;background:#0b1326;transition:transform 0.3s ease}
+    .card{border:1px solid #1f2937;border-radius:14px;padding:12px;margin-bottom:12px;background:var(--card)}
+    main{padding:14px 16px}
+    h2{margin:6px 0 10px;font-size:14px;color:#ffffff}
+    .jobs ul{list-style:none;margin:8px 0 0;padding:0;max-height:40vh;overflow:auto}
+    .jobs li{margin:0 0 8px;padding:10px;border:1px solid #1f2937;border-radius:10px;cursor:pointer;background:#0b1326}
+    .jobs li.active{border-color:var(--accent);background:rgba(255,209,0,.25)}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+    .toolbar>*{min-width:160px}
+    .toolbar input[type="search"]{flex:1;min-width:260px}
+    .status{margin-left:auto;color:#cbd5e1}
+
+    .btn-clear-mf {
+      margin-top: 0.5em;
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 0.4em 0.8em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-clear-mf:hover {
+      background: #d32f2f;
+    }    
+
+    /* กำหนดให้เซลล์ของแถว filter จัดเนื้อหากลางแนวนอน */
+    #recordsFilterRow th {
+    text-align: center;
+    vertical-align: middle;
+    }
+
+    /* ทำให้ input + ปุ่มใน filter อยู่ตรงกลาง */
+    #recordsFilterRow th > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    /* เพิ่มความยืดหยุ่นภายใน div ของแต่ละเซลล์ */
+    #recordsFilterRow th > div > input[type="search"] {
+    max-width: 100%;
+    }
+
+    #recordsFilterRow th {
+      vertical-align: middle;
+      padding: 8px 4px;
+    }    
+
+    /* KPI (Records) */
+    .kpi{display:flex;gap:10px;margin:10px 0;justify-content:left;flex-wrap:wrap}
+    .kpi .card{min-width:380px;text-align:center;user-select:none;cursor:pointer;transition:.15s;
+      background: linear-gradient(180deg,rgba(148,163,184,.10),transparent)}
+    .kpi .card:hover{border-color:#334155}
+    .kpi .card.active{border-color:var(--accent);background:linear-gradient(180deg,rgba(255,209,0,.25),rgba(255,209,0,.1))}
+    #cardMatched.active{border-color:#10b981;background:linear-gradient(180deg,rgba(16,185,129,.25),rgba(16,185,129,.1))}
+    #cardUnmatched.active{border-color:#f59e0b;background:linear-gradient(180deg,rgba(245,158,11,.25),rgba(245,158,11,.1))}
+
+    .tablewrap{border:1px solid #1f2937;border-radius:12px;overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    thead th{position:sticky;top:0;background:#0f172a;border-bottom:1px solid #1f2937;padding:8px;text-align:left}
+    tbody td{padding:8px;border-bottom:1px solid #11203a}
+    .small{font-size:12px;color:#cbd5e1}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid #27405e}
+    .badge.ok{border-color:#14532d}
+    .badge.warn{border-color:#845213}
+    .tabs{display:flex;gap:8px;margin:8px 0}
+    .tabs button{padding:6px 10px;border-radius:999px}
+    .tabs button.active{border-color:var(--accent);background:rgba(255,209,0,.25)}
+    .hidden{display:none}
+    .jobs .filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end;margin-top:8px}
+    .jobs .filters .actions{grid-column:1 / -1;display:flex;gap:8px}
+    #loadingOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9999}
+    #loadingOverlay .box{background:#0b1326;border:1px solid #1f2937;border-radius:12px;padding:16px 20px;min-width:260px;text-align:center}
+    .spinner{width:22px;height:22px;border:3px solid #334155;border-top-color:var(--accent);border-radius:50%;display:inline-block;animation:spin 0.9s linear infinite;margin-right:10px;vertical-align:middle}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .summarybar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+    .meta-row{display:flex;gap:8px;align-items:center;margin-top:10px;justify-content:space-between}
+    #adminCard{margin-top:12px;} #jobsList{margin-top:8px;}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #27405e;border-radius:999px;padding:2px 8px;background:var(--chip-bg)}
+
+    /* ===== Report (ธีม/ฟอนต์/ชาร์ต/ฮอตสปอต) ===== */
+    .kpi-report{justify-content:flex-start}
+    .kpi-report .card{cursor:default;background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+    /* metric cards */
+    .kpi-report .card.metric{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:220px}
+    .kpi-report .card .title{font-size:22px;font-weight:800;letter-spacing:.2px;text-align:center;color:var(--title)}
+    .kpi-report .card .value{font-size:20px;font-weight:700;margin-top:4px;color:#e5e7eb}
+
+    #serviceCard{min-width:260px}
+    #serviceCard .svc-row{display:flex;justify-content:space-between;gap:12px;margin-top:6px;padding-top:6px;border-top:1px solid #1f2937}
+    #serviceCard .svc-row span,#serviceCard .svc-row strong{font-size:16px}
+
+    #provinceCard{flex:1;min-width:320px}
+    #provinceCard .value{font-size:16px;font-weight:700}
+    .province-box{margin-top:6px;max-height:160px;overflow:auto}
+    .province-box .chip{margin-top:4px}
+
+    /* Charts */
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+    .chart-card{position:relative;height:380px;background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+    .chart-title{font-size:13px;color:var(--title);margin-bottom:6px}
+    .chart-card canvas{position:absolute;inset:14px} /* padding กัน label ล้น */
+
+    /* Insights */
+    .insights-card{background:linear-gradient(180deg,var(--tint-emerald),transparent)}
+    .hot-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;margin-top:6px}
+    .hot-name{font-size:13px}
+    .hot-bar{height:10px;border-radius:6px;background:#0e1a2b;overflow:hidden;min-width:180px}
+    .hot-bar>span{display:block;height:100%}
+    

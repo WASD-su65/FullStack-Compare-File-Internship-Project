@@ -22,7 +22,6 @@ load_dotenv()
 SHEET_NAME = os.getenv("SHEET_NAME") or "Sheet1"
 KEY_COLUMN  = os.getenv("KEY_COLUMN")  or "เลขวงจร"
 
-# -------------------- glyph normalize helpers --------------------
 _THAI_DIGITS = {ord(c): ord('0') + i for i, c in enumerate("๐๑๒๓๔๕๖๗๘๙")}
 _FULLW_DIGITS = {ord(c): ord('0') + i for i, c in enumerate("０１２３４５６７８９")}
 _X_LIKE = {'x','X','×','✕','Χ','χ','Х','х','Ｘ','ｘ'}
@@ -59,13 +58,11 @@ def _format_text(x: object) -> str:
         return ""
     return (s[:1].upper() + s[1:].lower()) if s.isascii() else s
 
-# -------------------- patterns --------------------
 _SEP = r"[ \t\u00A0\-_./]*"
 PAT_ALPHA = _re.compile(rf"(?<![A-Za-z0-9])(\d{{4}}){_SEP}([A-Za-z]){_SEP}(\d{{4}})(?![A-Za-z0-9])")
 PAT_ID    = _re.compile(rf"(?<![A-Za-z0-9])(\d{{4}}){_SEP}I{_SEP}D{_SEP}(\d{{3,}})(?![A-Za-z0-9])", _re.IGNORECASE)
 OLD_TAG_REGEX = _re.compile(r"(เก่า|old)", _re.IGNORECASE)
 
-# -------------------- IO --------------------
 def _read_master(master_path: str) -> pd.DataFrame:
     ext = os.path.splitext(master_path)[1].lower()
     if ext != ".xlsx":
@@ -89,7 +86,6 @@ def _read_compare(compare_path: str) -> pd.DataFrame:
     except Exception:
         return pd.read_excel(compare_path, header=None, dtype=str)
 
-# -------------------- extract --------------------
 def _extract_all_circuits(text: str) -> List[str]:
     """ดึง 'ทุก' วงจรจากข้อความเดียว (รวมก่อน, unify ก่อนไล่ regex)"""
     if not isinstance(text, str):
@@ -141,12 +137,10 @@ def _derive_service_category(circuit_norm: str, service_type) -> str:
         return "Broadband"
     return base
 
-# -------------------- main compare --------------------
 def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
     if not master_path or not compare_path:
         raise ValueError("master_path and compare_path are required")
 
-    # ===== Master =====
     mdf = _read_master(master_path)
     if KEY_COLUMN not in mdf.columns:
         raise ValueError(f"Master missing KEY_COLUMN: {KEY_COLUMN}")
@@ -190,7 +184,6 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
     db.commit()
     db.refresh(session)
 
-    # ===== Build results =====
     results: List[Dict[str, Any]] = []
     matched_total = 0
     unmatched_total = 0
@@ -200,11 +193,14 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
         info    = master_dict.get(circuit_norm)
         matched = 1 if info is not None else 0
 
-        customer       = _format_text((info or {}).get("customer"))
-        project_name   = _format_text((info or {}).get("project"))
-        province       = _format_text((info or {}).get("province"))
+        customer       = _format_text((info or {}).get("ลูกค้า"))
+        project_name   = _format_text((info or {}).get("ชื่อโครงการ"))
+        province       = _format_text((info or {}).get("จังหวัด"))
         service_type   = _pick_service_type(info or {})
         service_cat    = _derive_service_category(circuit_norm, service_type)
+
+        sla_val        = (info or {}).get("SLA")
+        branch_val     = _format_text((info or {}).get("สาขา"))
 
         results.append({
             "session_id":       session.id,
@@ -216,6 +212,8 @@ def run_test_compare(master_path: str, compare_path: str) -> Dict[str, Any]:
             "province":         province if matched else "",
             "service_type":     service_type if matched else "",
             "service_category": service_cat if matched else "",
+            "sla":              (sla_val if matched else None),
+            "branch":           (branch_val if matched else ""),
         })
 
         if matched: matched_total += 1
