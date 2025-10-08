@@ -178,12 +178,15 @@ services:
 }</pre>
 
 3. GET /api/report/{report_id} — Download report (CSV/Excel/JSON)
+
 **Parameters**
 - <pre>format : csv / xlsx / json</pre> (query param)
+
 **Response**
 - File download of the comparison report
 
 4. GET /api/health — Health check
+
 **Response**
 <pre>{ "status": "ok" }</pre>
 
