@@ -233,7 +233,7 @@ services:
 **Code style** : ใช้ flake8 / black (แนะนำ) เพื่อความสม่ำเสมอ
 
 # License / ใบอนุญาต
-Englist : Use #Creater : Poomipat Jitkrongsit ภาษาไทย : ใช้ #Creater : Poomipat Jitkrongsit
+Englist : Use #Creater : Poomipat Jitkrongsit in your code ภาษาไทย : ใช้ #Creater : Poomipat Jitkrongsit ในโค้ดของคุณ
 
 # Contact / ติดต่อ
 - GitHub: <pre>https://github.com/WASD-su65/FullStack-Compare-File-Internship-Project</pre>
