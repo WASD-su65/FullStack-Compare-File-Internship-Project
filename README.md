@@ -154,6 +154,7 @@ services:
 }</pre>
 
 2. POST /api/compare — Compare two uploaded files
+
 **Request (JSON)**
 <pre>
 {
