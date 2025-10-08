@@ -105,7 +105,7 @@ UPLOAD_DIR=./uploads</pre>
 
 1.เปิดไฟล์ <pre>frontend/compare.html</pre> ในเบราว์เซอร์ หรือ
 
-2.ถ้าต้องการเสิร์ฟไฟล์ static ผ่าน backend ให้ตรวจสอบว่า backend เสิร์ฟ static โฟลเดอร์ (เช่น <pre>app/static</pre> หรือ <pre>frontend</pre>) แล้วเปิด URL หน้าเว็บ
+2.ถ้าต้องการเสิร์ฟไฟล์ static ผ่าน backend ให้ตรวจสอบว่า backend เสิร์ฟ static โฟลเดอร์ (เช่น app/static หรือ frontend) แล้วเปิด URL หน้าเว็บ
 
 การใช้งานทั่วไป:
 - เลือกไฟล์ Main File
