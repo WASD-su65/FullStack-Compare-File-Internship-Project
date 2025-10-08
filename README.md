@@ -58,15 +58,15 @@ FullStack-Compare-File เป็นโปรเจกต์ฝึกงานท
 <pre>
 .
 ├── app/ # FastAPI app (หรือชื่อโฟลเดอร์ backend ของคุณ)
-│ ├── main.py # entrypoint ของแอพ
-│ ├── api/ # routing และ controllers
-│ ├── services/ # logic สำหรับการเปรียบเทียบ
-│ ├── models/ # ORM models / Pydantic schemas
-│ └── utils/ # helper functions (file parsing, validation)
-├── scripts/ # สคริปต์ช่วยเหลือ เช่น migration, seed
-├── frontend/ # static frontend files (compare.html, css, js)
-├── docker/ # Dockerfile / docker-compose
-├── tests/ # unit & integration tests
+│ ├── main.py             # entrypoint ของแอพ
+│ ├── api/                # routing และ controllers
+│ ├── services/           # logic สำหรับการเปรียบเทียบ
+│ ├── models/             # ORM models / Pydantic schemas
+│ └── utils/              # helper functions (file parsing, validation)
+├── scripts/              # สคริปต์ช่วยเหลือ เช่น migration, seed
+├── frontend/             # static frontend files (compare.html, css, js)
+├── docker/               # Dockerfile / docker-compose
+├── tests/                # unit & integration tests
 ├── requirements.txt
 ├── README.md
 └── ABOUT.md</pre>
