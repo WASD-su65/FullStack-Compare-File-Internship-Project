@@ -128,19 +128,19 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</pre>
 <pre># docker-compose.yml (ตัวอย่าง)
 version: '3.8'
 services:
-web:
-build: .
-ports:
-- "8000:8000"
-volumes:
-- .:/app
-environment:
-- DATABASE_URL=sqlite:///./db.sqlite3</pre>
+    web:
+        build: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/app
+        environment:
+            - DATABASE_URL=sqlite:///./db.sqlite3</pre>
 
 # API Reference (suggested) / ตัวอย่าง API ที่แนะนำ
 **Note**: ปรับ endpoint ให้ตรงกับโค้ดของคุณใน repository หากชื่อ/โครงสร้างจริงต่างจากด้านล่าง
 
-1. <pre>POST /api/upload</pre> — Upload a file
+1. POST /api/upload — Upload a file
 **Request** (multipart/form-data)
 - <pre>file</pre>: file to upload
 - <pre>file_type</pre>: <pre>main</pre> or <pre>upload</pre>
@@ -148,42 +148,42 @@ environment:
 **Response**
 <pre>
 {
-"status": "success",
-"file_id": "<uuid>",
-"message": "File uploaded"
+    "status": "success",
+    "file_id": "<uuid>",
+    "message": "File uploaded"
 }</pre>
 
-2. <pre>POST /api/compare</pre> — Compare two uploaded files
+2. POST /api/compare — Compare two uploaded files
 **Request (JSON)**
 <pre>
 {
-"main_file_id": "<uuid>",
-"upload_file_id": "<uuid>",
-"key_columns": ["id", "email"],
-"compare_columns": ["name","address","status"]
+    "main_file_id": "<uuid>",
+    "upload_file_id": "<uuid>",
+    "key_columns": ["id", "email"],
+    "compare_columns": ["name","address","status"]
 }</pre>
 
 **Response**
 <pre>
 {
-"status": "success",
-"summary": {
-"total_main": 1000,
-"total_upload": 980,
-"added": 10,
-"removed": 30,
-"modified": 20
+    "status": "success",
+    "summary": {
+    "total_main": 1000,
+    "total_upload": 980,
+    "added": 10,
+    "removed": 30,
+    "modified": 20
 },
-"report_id": "<uuid>"
+   "report_id": "<uuid>"
 }</pre>
 
-3. <pre>GET /api/report/{report_id}</pre> — Download report (CSV/Excel/JSON)
+3. GET /api/report/{report_id} — Download report (CSV/Excel/JSON)
 **Parameters**
-- <pre>format</pre> : <pre>csv</pre> / <pre>xlsx</pre> / <pre>json</pre> (query param)
+- <pre>format : csv / xlsx / json</pre> (query param)
 **Response**
 - File download of the comparison report
 
-4. <pre>GET /api/health</pre> — Health check
+4. GET /api/health — Health check
 **Response**
 <pre>{ "status": "ok" }</pre>
 
