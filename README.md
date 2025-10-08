@@ -49,7 +49,7 @@ FullStack-Compare-File เป็นโปรเจกต์ฝึกงานท
 
 # Tech Stack / เทคโนโลยีที่ใช้ (ตัวอย่าง)
 - **Backend** : Python, FastAPI, Uvicorn, SQLAlchemy (หรือ ORM ที่ชอบ), Pandas (สำหรับเปรียบเทียบตาราง)
-- **Frontend** : HTML / CSS / JavaScript (vanilla) — <pre> compare.html </pre>, <pre> login.html </pre> เป็นต้น
+- **Frontend** : HTML / CSS / JavaScript (vanilla) — <pre> compare.html, login.html </pre> เป็นต้น
 - **Database (optional)** : SQLite / PostgreSQL
 - **Dev tools** : pytest (for tests), Docker (optional)
 
