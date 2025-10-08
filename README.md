@@ -206,7 +206,7 @@ services:
 <pre>id,name,email,address,status</pre>
 
 # Testing / การทดสอบ
-- Tests should be placed under <pre>tests/</pre> and runnable with pytest
+- Tests should be placed under tests/ and runnable with pytest
 <pre>pytest -q</pre>
 
 แนะนำเขียน unit test สำหรับ:
@@ -218,7 +218,7 @@ services:
 **Simple approach** : รันบน VPS / VM ด้วย Uvicorn + Reverse proxy เช่น Nginx **Container approach** : สร้าง Docker image และนำไปรันบน container platform (Docker Swarm / Kubernetes / Cloud Run)
 
 **Steps (high level)** :
-1. Build production image (no <pre>--reload</pre>)
+1. Build production image (no --reload)
 2. ตั้งค่า environment variables ให้เหมาะสม
 3. หากใช้ DB ที่ persist ให้เชื่อมต่อ DB ภายนอก (Postgres, MySQL ฯลฯ)
 
@@ -226,15 +226,14 @@ services:
 ยินดีรับ Pull Requests และ Issues นะครับ — กรุณาทำตามขั้นตอน:
 
 1. Fork repo
-2. สร้าง branch ใหม่ <pre>feature/your-feature</pre> หรือ <pre>fix/issue-number</pre>
+2. สร้าง branch ใหม่ feature/your-feature หรือ fix/issue-number
 3. สร้าง PR พร้อมคำอธิบายการเปลี่ยนแปลง
 4. เพิ่ม tests หากเป็นไปได้
 
-**Code style** : ใช้ <pre>flake8</pre> / <pre>black</pre> (แนะนำ) เพื่อความสม่ำเสมอ
+**Code style** : ใช้ flake8 / black (แนะนำ) เพื่อความสม่ำเสมอ
 
 # License / ใบอนุญาต
 Englist : Use #Creater : Poomipat Jitkrongsit ภาษาไทย : ใช้ #Creater : Poomipat Jitkrongsit
 
 # Contact / ติดต่อ
 - GitHub: <pre>https://github.com/WASD-su65/FullStack-Compare-File-Internship-Project</pre>
-- Maintainer / ผู้ดูแล: (ระบุชื่อหรืออีเมล)
