@@ -90,7 +90,7 @@ source .venv/bin/activate # macOS / Linux
 .\.venv\Scripts\activate # Windows PowerShell
 pip install -r requirements.txt</pre>
 
-3. สร้างไฟล์ environment (ถ้ามี <pre>.env.example</pre>) และตั้งค่า
+3. สร้างไฟล์ environment (ถ้ามี .env.example) และตั้งค่า
 <pre># .env (ตัวอย่าง)
 APP_HOST=0.0.0.0
 APP_PORT=8000
@@ -99,7 +99,7 @@ UPLOAD_DIR=./uploads</pre>
 
 4. รันเซิร์ฟเวอร์ (ตัวอย่างใช้ Uvicorn)
 <pre>uvicorn app.main:app --reload --host 0.0.0.0 --port 8000</pre>
-หลังจากรันแล้ว คุณจะเห็น log ที่แจ้ง URL เช่น <pre>http://127.0.0.1:8000</pre> และถ้าเปิด <pre>/docs</pre> จะเห็น OpenAPI docs (ถ้าใช้ FastAPI)
+หลังจากรันแล้ว คุณจะเห็น log ที่แจ้ง URL เช่น http://127.0.0.1:8000 และถ้าเปิด /docs จะเห็น OpenAPI docs (ถ้าใช้ FastAPI)
 
 # Frontend — Run locally / รันหน้าเว็บ (Frontend)
 
