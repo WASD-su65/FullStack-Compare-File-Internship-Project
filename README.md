@@ -23,14 +23,14 @@ Thai (ไทย) : เปรียบเทียบไฟล์ระหว่�
 - About file / About (แยกไฟล์)
 
 # About / เกี่ยวกับโครงการ
-# English
+**English**
 FullStack-Compare-File is an internship project built to compare a trusted main file (source of truth) against an uploaded file (new data) and produce a reconciled result. The project contains a RESTful backend API for processing and comparison logic, and a minimal frontend for uploading files, visualizing differences, and exporting results.
 Main goals:
 - Detect and classify differences between two tabular datasets (e.g., missing records, mismatches, duplicates).
 - Produce human-readable and machine-readable reports (CSV/Excel/JSON) that highlight the differences.
 - Provide simple UI for quick verification and a programmable API for automation.
 
-# ภาษาไทย
+**ภาษาไทย**
 FullStack-Compare-File เป็นโปรเจกต์ฝึกงานที่พัฒนาเพื่อเปรียบเทียบ ไฟล์หลัก (Main File) ซึ่งเป็นแหล่งข้อมูลอ้างอิง กับ ไฟล์ที่อัปโหลด (Upload File) ที่นำเข้ามาใหม่ โดยมีเป้าหมายเพื่อค้นหาและจัดประเภทความแตกต่าง ระบุรายการที่ขาดหายหรือไม่ตรงกัน และส่งออกผลลัพธ์เพื่อใช้ตรวจสอบหรืออัปเดตระบบอื่น ๆ ได้อย่างอัตโนมัติ
 เป้าหมายหลัก:
 - ตรวจจับและจำแนกความแตกต่างระหว่างชุดข้อมูลแบบตาราง เช่น ระเบียนขาดหาย ข้อมูลไม่ตรงกัน หรือข้อมูลซ้ำ
