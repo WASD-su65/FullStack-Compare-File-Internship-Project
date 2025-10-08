@@ -112,6 +112,7 @@ UPLOAD_DIR=./uploads</pre>
 - เลือกไฟล์ Upload File
 - คลิกปุ่ม **Compare**
 - ดูผลลัพธ์บน UI และกด Export เพื่อดาวน์โหลดผลลัพธ์
+
 หาก frontend ของคุณใช้ bundler/packager (เช่น webpack, vite) ระบุคำสั่ง build / dev เพิ่มในส่วนนี้
 
 # Docker (optional) / Docker (ถ้าต้องการ)
