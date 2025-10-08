@@ -142,8 +142,8 @@ services:
 
 1. POST /api/upload — Upload a file
 **Request** (multipart/form-data)
-- <pre>file</pre>: file to upload
-- <pre>file_type</pre>: <pre>main</pre> or <pre>upload</pre>
+- file : file to upload
+- file_type : main or upload
 
 **Response**
 <pre>
